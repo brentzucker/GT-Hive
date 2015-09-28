@@ -1,0 +1,45 @@
+#app {
+	height: 407px;
+	width: 204px;
+	border: 1px solid black;
+	padding: 0px 0px 0px 0px;
+	position: relative;
+}
+
+.banner-image {
+	width: 204px;
+	height: 49px;
+	margin-bottom: 1px
+}
+
+.category-button {
+	width: 200px;
+	margin: 1px 0px 0px 1px;
+	text-align: left;
+	color: #fefdfc;
+}
+
+button.analytics {
+	width: 202px;
+	position: absolute;
+	bottom: 0;
+	margin: 0px;
+	border-radius: 0px;
+}
+
+button.favorites, button.dining {
+	background-color: #00254c;
+}
+
+button.recreation, button.study {
+	background-color: #EEB211;
+}
+
+button > .glyphicon {
+	margin-right: 10px;
+}
+
+button.analyitics {
+	margin: 0px;
+	border-radius: 0px;
+}
