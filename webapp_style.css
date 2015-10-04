@@ -1,6 +1,7 @@
 .buttons-container {
 	display: inline-flex;
-	width: 400px;
+	width: 500px;
+	padding: 0px;
 }
 
 .button-item {
