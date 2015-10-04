@@ -1,0 +1,33 @@
+.buttons-container {
+	display: inline-flex;
+	width: 400px;
+}
+
+.button-item {
+	background-color: #00254c;
+	border: 1px solid #EEB211;
+	margin: 0px;
+	padding: 0px;
+	width: 250px;
+	height: 250px;
+	display: inline-block;
+	cursor: pointer;
+	color: white;
+}
+
+.button-item:hover {
+	background-color: #EEB211;
+	color: #00254c;
+	border: 1px solid #00254c;
+}
+
+.icon {
+	font-size: 100px!important;
+	padding: 30px;
+}
+
+.center {
+     float: none;
+     margin-left: auto;
+     margin-right: auto;
+}
