@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">GT Hive</string>
+
+    <string name="crc">CRC</string>
+    <string name="library">Library</string>
+    <string name="culc">CULC</string>
+    <string name="dining">Dining Halls</string>
+    <string name="analytics">Analytics</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_information">InformationActivity</string>
+
+    <!-- Information Activity Strings -->
+    <string name="information_activity">Information</string>
+    <string name="building_name">Building Details</string>
+    <string name="current_occupancy">Current Occupancy</string>
+    <string name="capacity">Capacity</string>
+    <string name="percentage_filled">Percentage Filled</string>
+    <string name="floor1">Floor 1</string>
+    <string name="floor2">Floor 2</string>
+    <string name="floor3">Floor 3</string>
+    <string name="floor4">Floor 4</string>
+
+</resources>
