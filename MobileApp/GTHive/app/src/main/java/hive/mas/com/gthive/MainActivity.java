@@ -1,7 +1,7 @@
 package hive.mas.com.gthive;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -10,6 +10,10 @@ import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -52,7 +56,27 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         TextView mTextView = (TextView) findViewById(R.id.web_data_text);
-                        mTextView.setText(responseData);
+
+                        try {
+                            /* Parse JSON to list out each Building */
+                            JSONObject jsonRootObject = new JSONObject(responseData);
+
+                            // Get array of buildings
+                            JSONArray jsonArray = jsonRootObject.optJSONArray("buildings");
+
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                                String b_id = jsonObject.optString("b_id").toString();
+                                String name = jsonObject.optString("name").toString();
+
+                                // Append Building info to UI element, TextView
+                                mTextView.append(name + ": " + b_id + "\n");
+                            }
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
             }
