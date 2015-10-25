@@ -2,7 +2,7 @@ Apr 12 23:59:30 newdvland lawninfo: USER: GS8VhEXOv+tbJZT4EX0ru9iW9sC41i2N, MAC:
 Apr 12 23:59:30 newdvland lawninfo: USER: GS8VhEXOv+tbJZT4EX0ru9iW9sC41i2N, MAC: bc:92:6b:+X:RP:tn, SSID: GTwifi, VLAN: 316, IP: 128.61.30.212, APMAC: 08:cc:68:db:8d:30 APNAME: 200-14, AUTH: cache
 Apr 12 23:59:30 newdvland lawninfo: USER: GS8VhEXOv+tbJZT4EX0ru9iW9sC41i2N, MAC: bc:92:6b:+X:RP:tn, SSID: GTwifi, VLAN: 316, IP: 128.61.30.212, APMAC: 08:cc:68:db:8d:30 APNAME: 200-15, AUTH: cache
 Apr 12 23:59:30 newdvland lawninfo: USER: GS8VhEXOv+tbJZT4EX0ru9iW9sC41i2N, MAC: bc:92:6b:+X:RP:tn, SSID: GTwifi, VLAN: 316, IP: 128.61.30.212, APMAC: 08:cc:68:db:8d:30 APNAME: 166-140, AUTH: cache
-Apr 12 23:59:30 newdvland lawninfo: USER: GS8VhEXOv+tbJZT4EX0ru9iW9sC41i2N, MAC: bc:92:6b:+X:RP:tn, SSID: GTwifi, VLAN: 316, IP: 128.61.30.212, APMAC: 08:cc:68:db:8d:30 APNAME: 166-141, AUTH: cache
-Apr 12 23:59:30 newdvland lawninfo: USER: GS8VhEXOv+tbJZT4EX0ru9iW9sC41i2N, MAC: bc:92:6b:+X:RP:tn, SSID: GTwifi, VLAN: 316, IP: 128.61.30.212, APMAC: 08:cc:68:db:8d:30 APNAME: 166-142, AUTH: cache
-Apr 12 23:59:30 newdvland lawninfo: USER: GS8VhEXOv+tbJZT4EX0ru9iW9sC41i2N, MAC: bc:92:6b:+X:RP:tn, SSID: GTwifi, VLAN: 316, IP: 128.61.30.212, APMAC: 08:cc:68:db:8d:30 APNAME: 170-140, AUTH: cache
+Apr 12 23:59:30 newdvland lawninfo: USER: GS8VhEXOv+tbJZT4EX0ru9iW9sC41i2N, MAC: bc:92:6b:+X:RP:tn, SSID: GTwifi, VLAN: 316, IP: 128.61.30.212, APMAC: 08:cc:68:db:8d:30 APNAME: 166-41, AUTH: cache
+Apr 12 23:59:30 newdvland lawninfo: USER: GS8VhEXOv+tbJZT4EX0ru9iW9sC41i2N, MAC: bc:92:6b:+X:RP:tn, SSID: GTwifi, VLAN: 316, IP: 128.61.30.212, APMAC: 08:cc:68:db:8d:30 APNAME: 166-12, AUTH: cache
+Apr 12 23:59:30 newdvland lawninfo: USER: GS8VhEXOv+tbJZT4EX0ru9iW9sC41i2N, MAC: bc:92:6b:+X:RP:tn, SSID: GTwifi, VLAN: 316, IP: 128.61.30.212, APMAC: 08:cc:68:db:8d:30 APNAME: 170-40, AUTH: cache
 Apr 12 23:59:30 newdvland lawninfo: USER: GS8VhEXOv+tbJZT4EX0ru9iW9sC41i2N, MAC: bc:92:6b:+X:RP:tn, SSID: GTwifi, VLAN: 316, IP: 128.61.30.212, APMAC: 08:cc:68:db:8d:30 APNAME: 166-1, AUTH: cache
