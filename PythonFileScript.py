@@ -1,7 +1,6 @@
 def getAll():
     myDict = {}
     index = ["05", "06", "07", "08", "09", "10", "11"]
-    index = ["05"]
     for i in index:
         f = open("lawnmower_04{0}2015.txt".format(i))
         for line in f:
