@@ -118,9 +118,31 @@ app.get('/api/locationinfo_allbuildings', function (request, response) {
 // Location info of All Buildings
 app.get('/api/locationinfo_allrooms', function (request, response) {
 
-	// Get Building/Room ids
+	// Get Building/Room ids [b_id-room, ...]
 	var buildings = (JSON.parse(getBuildingRoomsTextFile())).buildings;
-	response.send(buildings);
+	
+	var rooms_list = [];
+	for (var i = 0; i < buildings.length; i++) {
+			
+		for (var j = 0; j < buildings[i].rooms.length; j++) {
+
+			rooms_list.push(buildings[i].b_id + '-' + buildings[i].rooms[j]);
+		}
+	}
+
+	// API for locations
+	var gtwhereami = 'http://gtwhereami.herokuapp.com';
+	var uri = '/locationinfo?';
+	var bid = 'bid=';
+	var room = '&room=';
+
+	for (var i = 0; i < rooms_list.length; i++) {
+		var b_id = rooms_list[i].split("-")[0];
+		var room_no = rooms_list[i].split("-")[1];
+		var url = gtwhereami + uri + bid + b_id + room + room_no;
+	}
+
+	response.send(rooms_list);
 });
 
 app.get('/api/locationinfo/:str', function (request, response) {
