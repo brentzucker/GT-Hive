@@ -123,9 +123,7 @@ app.get('/api/locationinfo_allrooms', function (request, response) {
 	
 	var rooms_list = [];
 	for (var i = 0; i < buildings.length; i++) {
-			
 		for (var j = 0; j < buildings[i].rooms.length; j++) {
-
 			rooms_list.push(buildings[i].b_id + '-' + buildings[i].rooms[j]);
 		}
 	}
@@ -140,9 +138,49 @@ app.get('/api/locationinfo_allrooms', function (request, response) {
 		var b_id = rooms_list[i].split("-")[0];
 		var room_no = rooms_list[i].split("-")[1];
 		var url = gtwhereami + uri + bid + b_id + room + room_no;
-	}
+		
+		// Global Variables to keep track of asynchronous calls
+		global.occupancies = [];
+		global.count = 0;
 
-	response.send(rooms_list);
+		global.http.get(url, function(gtwhereami_response) {
+
+			// Get building id from the socket of the asynchronous call (really struggled trying to figure this out, probably a better way)
+			var raw_b_id_room = gtwhereami_response.socket._httpMessage.path.substring('/locationinfo?bid='.length).split("&");
+			var b_id = raw_b_id_room[0];
+			var room = raw_b_id_room[1].substring('room='.length);
+			console.log(b_id + '-' + room);
+
+			var occupancy = '';
+			gtwhereami_response.on('data', function (chunk) {
+				occupancy += chunk;
+			});
+
+			gtwhereami_response.on('end', function () {
+
+				// Occupancy returned, count until all are returned
+				var occ = (JSON.parse(occupancy)).occupancy;
+
+				var json_obj = {};
+				json_obj.ap = b_id + '-' + room;
+				json_obj.b_id = b_id;
+				json_obj.room = room;
+				json_obj.occupancy = occ;
+
+				// Push building object to global array
+				global.occupancies.push(json_obj);
+				global.count++;
+
+				// Return json string when all occupancy requests have terminated
+				if (global.count >= rooms_list.length) {
+
+					var final_json = '{"occupancies": [' + global.occupancies + ']}'; 
+					response.send(global.occupancies);
+					console.log('done');
+				}
+			});
+		});
+	}
 });
 
 app.get('/api/locationinfo/:str', function (request, response) {
