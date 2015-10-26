@@ -115,6 +115,14 @@ app.get('/api/locationinfo_allbuildings', function (request, response) {
 	}
 });
 
+// Location info of All Buildings
+app.get('/api/locationinfo_allrooms', function (request, response) {
+
+	// Get Building/Room ids
+	var buildings = (JSON.parse(getBuildingRoomsTextFile())).buildings;
+	response.send(buildings);
+});
+
 app.get('/api/locationinfo/:str', function (request, response) {
 	var str = request.params.str;
 
@@ -201,7 +209,7 @@ function getBuildingsTextFile() {
 
 function getBuildingRoomsTextFile() {
 	var fs = require("fs");
-	var json = fs.readFileSync('building_rooms.txt').toString();
+	var json = fs.readFileSync('buildings_rooms.txt').toString();
 	return json;
 }
 
