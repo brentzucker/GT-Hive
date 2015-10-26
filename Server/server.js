@@ -149,7 +149,6 @@ app.get('/api/locationinfo_allrooms', function (request, response) {
 			var raw_b_id_room = gtwhereami_response.socket._httpMessage.path.substring('/locationinfo?bid='.length).split("&");
 			var b_id = raw_b_id_room[0];
 			var room = raw_b_id_room[1].substring('room='.length);
-			console.log(b_id + '-' + room);
 
 			var occupancy = '';
 			gtwhereami_response.on('data', function (chunk) {
@@ -159,7 +158,13 @@ app.get('/api/locationinfo_allrooms', function (request, response) {
 			gtwhereami_response.on('end', function () {
 
 				// Occupancy returned, count until all are returned
-				var occ = (JSON.parse(occupancy)).occupancy;
+				var occ = '';
+				try {
+				    occ = (JSON.parse(occupancy)).occupancy;
+				} catch(err) {
+				    occ = '';
+				    console.log('Bad Request: ' + b_id + '-' + room);
+				}
 
 				var json_obj = {};
 				json_obj.ap = b_id + '-' + room;
@@ -174,8 +179,8 @@ app.get('/api/locationinfo_allrooms', function (request, response) {
 				// Return json string when all occupancy requests have terminated
 				if (global.count >= rooms_list.length) {
 
-					var final_json = '{"occupancies": [' + global.occupancies + ']}'; 
-					response.send(global.occupancies);
+					var final_json = '{"occupancies": ' + JSON.stringify(global.occupancies) + '}'; 
+					response.send(final_json);
 					console.log('done');
 				}
 			});
