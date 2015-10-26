@@ -40,6 +40,7 @@ def getAll():
     building_list = []
     for b_id in list(buildings.keys()):
         building = {}
+        building['b_id'] = b_id;
         building['rooms'] = buildings[b_id]
         building['floors'] = []
         for room in buildings[b_id]:
@@ -49,7 +50,7 @@ def getAll():
                 building[floor] = [room]
             else:
                 building[floor].append(room)
-        building_list.append({b_id : building})
+        building_list.append(building)
 
     json = {}
     json['buildings'] = building_list
