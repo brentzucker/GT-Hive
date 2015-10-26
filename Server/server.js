@@ -199,6 +199,12 @@ function getBuildingsTextFile() {
 	return json;
 }
 
+function getBuildingRoomsTextFile() {
+	var fs = require("fs");
+	var json = fs.readFileSync('building_rooms.txt').toString();
+	return json;
+}
+
 // Returns building id's and names [{"b_id": <id-(String)>, "name": <name-(String)>},...]
 function parseBuildingsInfo(buildings_info) {
 
