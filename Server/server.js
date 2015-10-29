@@ -30,12 +30,11 @@ app.get('/api/buildings', function (request, response) {
 app.get('/api/locationinfo/buildings', function (request, response) {
 	
 	// Get Building ids
-	var building_ids_names_obj = (JSON.parse(getBuildingsTextFile())).buildings;
-	var buildings = building_ids_names_obj;
+	var buildings = (JSON.parse(getBuildingsTextFile())).buildings;
 
 	// API for locations
 	var gtwhereami = 'http://gtwhereami.herokuapp.com/';
-	var endpoint = 'locationinfo?bid=';
+	var uri = 'locationinfo?bid=';
 
 	// Generate Global Associative Array for reference in Asynch call
 	global.buildings = [];
@@ -49,15 +48,14 @@ app.get('/api/locationinfo/buildings', function (request, response) {
 		// Global Variables to keep track of asynchronous calls
 		global.occupancies = [];
 		global.count = 0;
-		global.buildings_length = buildings.length;
 		
 		// Custom URL for each building
-		var building_occupation_url = gtwhereami + endpoint + buildings[i].b_id;
+		var url = gtwhereami + uri + buildings[i].b_id;
 
-		global.http.get(building_occupation_url, function(gtwhereami_response) {
+		global.http.get(url, function(gtwhereami_response) {
 
 			// Get building id from the socket of the asynchronous call (really struggled trying to figure this out, probably a better way)
-			var b_id = gtwhereami_response.socket._httpMessage.path.substring(endpoint.length + 1);
+			var b_id = gtwhereami_response.socket._httpMessage.path.substring(uri.length + 1);
 
 			var occupancy = '';
 			gtwhereami_response.on('data', function (chunk) {
@@ -68,20 +66,28 @@ app.get('/api/locationinfo/buildings', function (request, response) {
 
 				// Occupancy returned, count until all are returned
 				var occ = (JSON.parse(occupancy)).occupancy;
-				var json = '"' + b_id + '" : {';
-				json += '"b_id": "' + b_id + '", ';
-				json += '"occupancy": ' + occ + ', ';
-				json += '"name": "' + global.buildings['b_id: ' + b_id] + '"';
-				json += '}';
+				try {
+				    occ = (JSON.parse(occupancy)).occupancy;
+				} catch(err) {
+				    occ = '';
+				    console.log('Bad Request: ' + b_id);
+				}
+
+				var json_obj = {};
+				json_obj.b_id = b_id;
+				json_obj.occupancy = occ;
+				
+				json_obj.name = global.buildings['b_id: ' + b_id];
 
 				// Push building object to global array
-				global.occupancies.push(json);
+				global.occupancies.push(json_obj);
 				global.count++;
 
 				// Return json string when all occupancy requests have terminated
-				if (global.count >= global.buildings_length) {
+				if (global.count >= buildings.length) {
 
-					var final_json = '{"occupancies": {' + global.occupancies + '}}'; 
+					var final_json = {};
+					final_json.occupancies = global.occupancies; 
 					response.send(final_json);
 				}
 			});
@@ -141,10 +147,12 @@ app.get('/api/locationinfo/rooms', function (request, response) {
 				}
 
 				var json_obj = {};
-				json_obj.ap = b_id + '-' + room;
 				json_obj.b_id = b_id;
-				json_obj.room = room;
 				json_obj.occupancy = occ;
+				
+				json_obj.ap = b_id + '-' + room;
+				json_obj.room = room;
+				
 
 				// Push building object to global array
 				global.occupancies.push(json_obj);
@@ -153,7 +161,8 @@ app.get('/api/locationinfo/rooms', function (request, response) {
 				// Return json string when all occupancy requests have terminated
 				if (global.count >= rooms_list.length) {
 
-					var final_json = '{"occupancies": ' + JSON.stringify(global.occupancies) + '}'; 
+					var final_json = {};
+					final_json.occupancies = global.occupancies; 
 					response.send(final_json);
 					console.log('done');
 				}
