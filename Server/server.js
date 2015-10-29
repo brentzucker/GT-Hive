@@ -26,6 +26,12 @@ app.get('/api/buildings', function (request, response) {
 	response.send(json);
 });
 
+// Array of all Rooms (b_id, name)
+app.get('/api/rooms', function (request, response) {
+	var json = getBuildingRoomsTextFile();
+	response.send(json);
+});
+
 // Location info of All Buildings
 app.get('/api/locationinfo/buildings', function (request, response) {
 	
@@ -192,7 +198,9 @@ function requestOccupancies(response, location_list, type_of_request) {
 				if (global.count >= location_list.length) {
 
 					var final_json = {};
-					final_json.occupancies = global.occupancies; 
+					final_json.timestamp = new Date().getTime();
+					final_json.occupancies = global.occupancies;
+					cacheOccupancies(type_of_request, final_json); // Write occupancies to text file
 					response.send(final_json);
 					console.log('Occupancies Request Complete: ' + type_of_request);
 				}
@@ -221,6 +229,21 @@ function getBuildingRoomsTextFile() {
 	var filename = 'buildings_rooms.txt';
 	var json = readFromTextFile(filename);
 	return json;
+}
+
+function writeToTextFile(filename, data) {
+	var fs  = require("fs");
+	fs.writeFile(filename, data, function(err) {
+	    if(err) {
+	        return console.log(err);
+	    }
+	    console.log('Saved: ' + filename);
+	}); 
+}
+
+function cacheOccupancies(type_of_request, data) {
+	var filename = 'cached_occupancies_' + type_of_request + '.txt';
+	writeToTextFile(filename, JSON.stringify(data));
 }
 
 // Returns building id's and names [{"b_id": <id-(String)>, "name": <name-(String)>},...]
