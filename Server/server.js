@@ -86,7 +86,14 @@ app.get('/api/locationinfo/:str', function (request, response) {
 			for (var i = 0; i < buildings.length; i++) {
 
 				var b_id = buildings[i].b_id;
-				var occupancy = occ_list.occupancies[buildings[i].b_id].occupancy
+				var occupancy;
+				try {
+					console.log(buildings[i].b_id);
+					occupancy = occ_list.occupancies[buildings[i].b_id].occupancy;
+				} catch (err) {
+					occupancy = -1;
+				}
+				console.log('occupancy ' + occupancy);
 				var json = {};
 				json.b_id = b_id;
 				json.occupancy = occupancy;
@@ -151,7 +158,7 @@ function requestOccupancies(response, location_list, type_of_request) {
 		for (var i = 0; i < location_list.length; i++) {
 
 			// Global Variables to keep track of asynchronous calls
-			global.occupancies = [];
+			global.occupancies = {};
 			global.count = 0;
 
 			// Custom URL structure for type_of_request
@@ -206,13 +213,17 @@ function requestOccupancies(response, location_list, type_of_request) {
 					
 					if (type_of_request == 'buildings') {
 				    	json_obj.name = global.buildings['b_id: ' + b_id];
+				    	
+				    	// Push building object to global array
+				    	global.occupancies[b_id] = json_obj;
 				    } else if (type_of_request == 'rooms') {
-				    	json_obj.ap = b_id + '-' + room;
+				    	var ap = b_id + '-' + room;
+				    	json_obj.ap = ap;
 						json_obj.room = room;
-				    }
 
-					// Push building object to global array
-					global.occupancies.push(json_obj);
+						// Push building object to global array
+						global.occupancies[ap] = json_obj;
+				    }
 					global.count++;
 
 					// Return json string when all occupancy requests have terminated
