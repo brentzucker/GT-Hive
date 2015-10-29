@@ -104,7 +104,7 @@ app.get('/api/locationinfo/:str', function (request, response) {
 
 	/* Request Location Info for each building
 	 * TODO: Reuqest location info for room */
-	var uri = '/api/locationinfo/buildings';
+	var uri = '/api/locationinfo/all';
 	var url = 'http://' + global.hostname + ':' + global.port + uri;
 
 	global.http.get(url, function(res) {
@@ -150,7 +150,7 @@ app.get('/api/locationinfo/:str', function (request, response) {
  * * * * * * * * * */
 
 function requestOccupancies(response, location_list, type_of_request) {
-	
+
 	var isCacheExpired = true;
 	try {
 		var txt = readCachedOccupancies(type_of_request);
