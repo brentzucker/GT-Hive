@@ -19,41 +19,15 @@ app.listen(global.port);
 // import http module
 global.http = require('http'); 
 
-// All Building Id's and Names (could definitely cache this initial request into a text file or database)
-app.get('/api/building_ids_names', function (request, response) {
-
-	/* Request GT Places API */
-	
-	var gtplaces_url = 'http://m.gatech.edu/widget/gtplaces/content/api/buildings';
-
-	global.http.get(gtplaces_url, function(res) {
-		
-		var buildings_info = '';
-		res.on('data', function (chunk) {
-			buildings_info += chunk;
-		});
-
-		res.on('end', function () {
-			
-			// Parse JSON, pull out building id's and names
-			var buildings = parseBuildingsInfo(buildings_info);
-
-			// Return to /api/building_ids.json
-			var json = '{"buildings": ' + buildings + '}';
-			response.send(json);
-		});		
-	}).end();
-});
-
-// Reads archived /api/building_ids_names from text file
-app.get('/api/building_ids_names_local', function (request, response) {
-
+// Array of all Buildings (b_id, name)
+app.get('/api/buildings', function (request, response) {
+	// cached from http://m.gatech.edu/widget/gtplaces/content/api/buildings
 	var json = getBuildingsTextFile();
 	response.send(json);
 });
 
 // Location info of All Buildings
-app.get('/api/locationinfo_allbuildings', function (request, response) {
+app.get('/api/locationinfo/buildings', function (request, response) {
 	
 	// Get Building ids
 	var building_ids_names_obj = (JSON.parse(getBuildingsTextFile())).buildings;
@@ -116,7 +90,7 @@ app.get('/api/locationinfo_allbuildings', function (request, response) {
 });
 
 // Location info of All Buildings
-app.get('/api/locationinfo_allrooms', function (request, response) {
+app.get('/api/locationinfo/rooms', function (request, response) {
 
 	// Get Building/Room ids [b_id-room, ...]
 	var buildings = (JSON.parse(getBuildingRoomsTextFile())).buildings;
@@ -192,45 +166,11 @@ app.get('/api/locationinfo/:str', function (request, response) {
 	var str = request.params.str;
 
 	/* Parse Input String */
-
-	var tokens = request.params.str.split("&");
-	var buildings = [];
-	for (var i = 0; i < tokens.length; i++) {
-
-		if (tokens[i].split("=").length === 2) {
-			if (tokens[i].split("=")[0] === "b_id") {
-
-				// i.e. [b_id, 81-337] or [b_id, 81]
-				var b_id_raw_array = tokens[i].split("=");
-
-				// i.e. [81] or [81, 337]
-				var b_id_array = b_id_raw_array[1].split("-");
-
-				if (b_id_array.length == 1) {
-					// request just b_id
-					var building = {'b_id': b_id_array[0]};
-				} else if (b_id_array.length == 2) {
-					// request b_id and room
-					var building = {'b_id': b_id_array[0],
-									'room': b_id_array[1]};
-				} else {
-					// bad request
-					var building = {};
-				}
-				buildings.push(building);
-			} else {
-				// bad request
-				response.send('Bad Request: ' + str);
-			}
-		} else {
-			// bad request
-			response.send('Bad Request: ' + str);
-		}
-	}
+	var buildings = parseBuildingString(str);
 
 	/* Request Location Info for each building
 	 * TODO: Reuqest location info for room */
-	var uri = '/api/locationinfo_allbuildings';
+	var uri = '/api/locationinfo/buildings';
 	var url = 'http://' + global.hostname + ':' + global.port + uri;
 
 	global.http.get(url, function(res) {
@@ -266,15 +206,21 @@ app.get('/api/locationinfo/:str', function (request, response) {
  * Helper Functions 
  * * * * * * * * * * * * */
 
-function getBuildingsTextFile() {
+function readFromTextFile(filename) {
 	var fs  = require("fs");
-	var json = fs.readFileSync('building_ids_names.json').toString();
+	var txt = fs.readFileSync(filename).toString();
+	return txt;	
+}
+
+function getBuildingsTextFile() {
+	var filename = 'building_ids_names.txt';
+	var json = readFromTextFile(filename);
 	return json;
 }
 
 function getBuildingRoomsTextFile() {
-	var fs = require("fs");
-	var json = fs.readFileSync('buildings_rooms.txt').toString();
+	var filename = 'buildings_rooms.txt';
+	var json = readFromTextFile(filename);
 	return json;
 }
 
@@ -296,4 +242,40 @@ function parseBuildingsInfo(buildings_info) {
 	json += ']}';
 
 	return json;
+}
+
+// Parse dynamic endpoint return array of buildings (i.e. b_id=81&b_id=33 => [b_id: 81, b_id: 33])
+function parseBuildingString(str) {
+	var tokens = str.split("&");
+	var buildings = [];
+	for (var i = 0; i < tokens.length; i++) {
+		if (tokens[i].split("=").length === 2 && tokens[i].split("=")[0] === "b_id") {
+
+			// i.e. [b_id, 81-337] or [b_id, 81]
+			var b_id_raw_array = tokens[i].split("=");
+
+			// i.e. [81] or [81, 337]
+			var b_id_array = b_id_raw_array[1].split("-");
+
+			if (b_id_array.length == 1 && b_id_array[0] != '') {
+				// request just b_id
+				var building = {'b_id': b_id_array[0]};
+				buildings.push(building);
+			} else if (b_id_array.length == 2) {
+				// request b_id and room
+				var building = {'b_id': b_id_array[0],
+								'room': b_id_array[1]};
+				buildings.push(building);
+			} else {
+				// bad request
+			}
+		} else {
+			// bad request
+			response.send('Bad Request: ' + str);
+			buildings = [];
+			break;
+		}
+	}
+	console.log(buildings);
+	return buildings;
 }
