@@ -2,6 +2,7 @@
 
 global.hostname = require('os').hostname();
 global.port = 8080;
+global.cache_time_to_live = 5 * 60 * 1000; // 5 minutes
 
 /* Configure Express with Node */
 
@@ -107,105 +108,126 @@ app.get('/api/locationinfo/:str', function (request, response) {
 
 function requestOccupancies(response, location_list, type_of_request) {
 
-	// API for locations
-	var gtwhereami = 'http://gtwhereami.herokuapp.com/';
-	
-	var uri, bid, room;
-	if (type_of_request == 'buildings') {
-		uri = 'locationinfo?bid=';
+	var isCacheExpired = true;
+	try {
+		var txt = readCachedOccupancies(type_of_request);
+		var cached_timestamp = (JSON.parse(txt)).timestamp;
+		var current_time = new Date().getTime();
+		console.log('current_time: ' + current_time);
+		console.log('timestamp: ' + cached_timestamp);
 
-		// Generate Global Associative Array for reference in Asynch call
-		global.buildings = [];
-		for (var i = 0; i < location_list.length; i++) {
-			global.buildings['b_id: ' + location_list[i].b_id] = location_list[i].name;
+		if (cached_timestamp + global.cache_time_to_live < current_time) {
+			console.log('Cache Expired. Requesting GTWhereAmI.');
+		} else {
+			isCacheExpired = false;
+			console.log('Cached Response');
+			response.send(txt);
 		}
-	} else if (type_of_request == 'rooms') {
-		uri = '/locationinfo?';
-		bid = 'bid=';
-		room = '&room=';
+	} catch (err) {
+		console.log(err);
 	}
-
-
-	// Loop through all building id's and request locationinfo
-	for (var i = 0; i < location_list.length; i++) {
-
-		// Global Variables to keep track of asynchronous calls
-		global.occupancies = [];
-		global.count = 0;
-
-		// Custom URL structure for type_of_request
-		var url, b_id, room_no;
+	
+	if (isCacheExpired) {
+		// API for locations
+		var gtwhereami = 'http://gtwhereami.herokuapp.com/';
+		
+		var uri, bid, room;
 		if (type_of_request == 'buildings') {
-			url = gtwhereami + uri + location_list[i].b_id;
+			uri = 'locationinfo?bid=';
+
+			// Generate Global Associative Array for reference in Asynch call
+			global.buildings = [];
+			for (var i = 0; i < location_list.length; i++) {
+				global.buildings['b_id: ' + location_list[i].b_id] = location_list[i].name;
+			}
 		} else if (type_of_request == 'rooms') {
-			b_id = location_list[i].split("-")[0];
-			room_no = location_list[i].split("-")[1];
-			url = gtwhereami + uri + bid + b_id + room + room_no;
+			uri = '/locationinfo?';
+			bid = 'bid=';
+			room = '&room=';
 		}
 
-		global.http.get(url, function(gtwhereami_response) {
 
-			// Get building id from the socket of the asynchronous call (really struggled trying to figure this out, probably a better way)
-			var b_id, room;
+		// Loop through all building id's and request locationinfo
+		for (var i = 0; i < location_list.length; i++) {
+
+			// Global Variables to keep track of asynchronous calls
+			global.occupancies = [];
+			global.count = 0;
+
+			// Custom URL structure for type_of_request
+			var url, b_id, room_no;
 			if (type_of_request == 'buildings') {
-				b_id = gtwhereami_response.socket._httpMessage.path.substring(uri.length + 1);
+				url = gtwhereami + uri + location_list[i].b_id;
 			} else if (type_of_request == 'rooms') {
-				var raw_b_id_room = gtwhereami_response.socket._httpMessage.path.substring('/locationinfo?bid='.length + 1).split("&");
-				
-				b_id = raw_b_id_room[0];
-				room = raw_b_id_room[1].substring('room='.length);
+				b_id = location_list[i].split("-")[0];
+				room_no = location_list[i].split("-")[1];
+				url = gtwhereami + uri + bid + b_id + room + room_no;
 			}
 
-			var occupancy = '';
-			gtwhereami_response.on('data', function (chunk) {
-				occupancy += chunk;
-			});
+			global.http.get(url, function(gtwhereami_response) {
 
-			gtwhereami_response.on('end', function () {
-
-				// Occupancy returned, count until all are returned
-				var occ;
-				try {
-				    occ = (JSON.parse(occupancy)).occupancy;
-				} catch(err) {
-				    occ = '';
-
-				    var log;
-				    if (type_of_request == 'buildings') {
-				    	log = 'Bad Request: ' + b_id;
-				    } else if (type_of_request == 'rooms') {
-				    	log = 'Bad Request: ' + b_id + '-' + room;
-				    }
-				    console.log(log);
-				}
-
-				var json_obj = {};
-				json_obj.b_id = b_id;
-				json_obj.occupancy = occ;
-				
+				// Get building id from the socket of the asynchronous call (really struggled trying to figure this out, probably a better way)
+				var b_id, room;
 				if (type_of_request == 'buildings') {
-			    	json_obj.name = global.buildings['b_id: ' + b_id];
-			    } else if (type_of_request == 'rooms') {
-			    	json_obj.ap = b_id + '-' + room;
-					json_obj.room = room;
-			    }
-
-				// Push building object to global array
-				global.occupancies.push(json_obj);
-				global.count++;
-
-				// Return json string when all occupancy requests have terminated
-				if (global.count >= location_list.length) {
-
-					var final_json = {};
-					final_json.timestamp = new Date().getTime();
-					final_json.occupancies = global.occupancies;
-					cacheOccupancies(type_of_request, final_json); // Write occupancies to text file
-					response.send(final_json);
-					console.log('Occupancies Request Complete: ' + type_of_request);
+					b_id = gtwhereami_response.socket._httpMessage.path.substring(uri.length + 1);
+				} else if (type_of_request == 'rooms') {
+					var raw_b_id_room = gtwhereami_response.socket._httpMessage.path.substring('/locationinfo?bid='.length + 1).split("&");
+					
+					b_id = raw_b_id_room[0];
+					room = raw_b_id_room[1].substring('room='.length);
 				}
+
+				var occupancy = '';
+				gtwhereami_response.on('data', function (chunk) {
+					occupancy += chunk;
+				});
+
+				gtwhereami_response.on('end', function () {
+
+					// Occupancy returned, count until all are returned
+					var occ;
+					try {
+					    occ = (JSON.parse(occupancy)).occupancy;
+					} catch(err) {
+					    occ = '';
+
+					    var log;
+					    if (type_of_request == 'buildings') {
+					    	log = 'Bad Request: ' + b_id;
+					    } else if (type_of_request == 'rooms') {
+					    	log = 'Bad Request: ' + b_id + '-' + room;
+					    }
+					    console.log(log);
+					}
+
+					var json_obj = {};
+					json_obj.b_id = b_id;
+					json_obj.occupancy = occ;
+					
+					if (type_of_request == 'buildings') {
+				    	json_obj.name = global.buildings['b_id: ' + b_id];
+				    } else if (type_of_request == 'rooms') {
+				    	json_obj.ap = b_id + '-' + room;
+						json_obj.room = room;
+				    }
+
+					// Push building object to global array
+					global.occupancies.push(json_obj);
+					global.count++;
+
+					// Return json string when all occupancy requests have terminated
+					if (global.count >= location_list.length) {
+
+						var final_json = {};
+						final_json.timestamp = new Date().getTime();
+						final_json.occupancies = global.occupancies;
+						cacheOccupancies(type_of_request, final_json); // Write occupancies to text file
+						response.send(final_json);
+						console.log('Occupancies Request Complete: ' + type_of_request);
+					}
+				});
 			});
-		});
+		}
 	}
 }
 
@@ -242,8 +264,13 @@ function writeToTextFile(filename, data) {
 }
 
 function cacheOccupancies(type_of_request, data) {
-	var filename = 'cached_occupancies_' + type_of_request + '.txt';
+	var filename = 'cache/cached_occupancies_' + type_of_request + '.txt';
 	writeToTextFile(filename, JSON.stringify(data));
+}
+
+function readCachedOccupancies(type_of_request) {
+	var filename = 'cache/cached_occupancies_' + type_of_request + '.txt';
+	return readFromTextFile(filename);
 }
 
 // Returns building id's and names [{"b_id": <id-(String)>, "name": <name-(String)>},...]
