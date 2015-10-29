@@ -60,6 +60,42 @@ app.get('/api/locationinfo/rooms', function (request, response) {
 	requestOccupancies(response, rooms_list, type_of_request);
 });
 
+// Location info of All Buildings and rooms
+app.get('/api/locationinfo/all', function (request, response) {
+
+	var uris = ['/api/locationinfo/buildings', '/api/locationinfo/rooms'];
+	
+	var url = 'http://' + global.hostname + ':' + global.port;
+
+	global.count = 0;
+	global.occupancies = {};
+
+	for (var i = 0; i < uris.length; i++) {
+		global.http.get(url + uris[i], function(res) {
+
+			var data = '';
+			res.on('data', function (chunk) {
+				data += chunk;
+			});
+
+			res.on("end", function() {
+				global.count++;
+				var locationinfo_obj = JSON.parse(data);
+				for (id in locationinfo_obj.occupancies) {
+					console.log(id);
+					global.occupancies[id] = locationinfo_obj.occupancies[id];
+				}
+
+				if (global.count == uris.length) {
+					var final_json = {};
+					final_json.occupancies = global.occupancies;
+					response.send(final_json);
+				}
+			});
+		});
+	}
+});
+
 app.get('/api/locationinfo/:str', function (request, response) {
 	var str = request.params.str;
 
@@ -114,7 +150,7 @@ app.get('/api/locationinfo/:str', function (request, response) {
  * * * * * * * * * */
 
 function requestOccupancies(response, location_list, type_of_request) {
-
+	
 	var isCacheExpired = true;
 	try {
 		var txt = readCachedOccupancies(type_of_request);
@@ -308,6 +344,7 @@ function parseBuildingsInfo(buildings_info) {
 function parseBuildingString(str) {
 	var tokens = str.split("&");
 	var buildings = [];
+
 	for (var i = 0; i < tokens.length; i++) {
 		if (tokens[i].split("=").length === 2 && tokens[i].split("=")[0] === "b_id") {
 
@@ -317,25 +354,23 @@ function parseBuildingString(str) {
 			// i.e. [81] or [81, 337]
 			var b_id_array = b_id_raw_array[1].split("-");
 
-			if (b_id_array.length == 1 && b_id_array[0] != '') {
-				// request just b_id
-				var building = {'b_id': b_id_array[0]};
-				buildings.push(building);
-			} else if (b_id_array.length == 2) {
-				// request b_id and room
-				var building = {'b_id': b_id_array[0],
-								'room': b_id_array[1]};
+			var building = {};
+			if (b_id_array.length > 0  && b_id_array[0] != '') {
+				building.b_id = b_id_array[0];
+
+				if (b_id_array.length == 2) {
+					building.room = b_id_array[1];
+				}
 				buildings.push(building);
 			} else {
 				// bad request
 			}
 		} else {
 			// bad request
-			response.send('Bad Request: ' + str);
+			// response.send('Bad Request: ' + str);
 			buildings = [];
 			break;
 		}
 	}
-	console.log(buildings);
 	return buildings;
 }
