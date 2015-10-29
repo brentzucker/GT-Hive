@@ -189,7 +189,9 @@ app.get('/api/locationinfo/:str', function (request, response) {
 
 				var b_id = buildings[i].b_id;
 				var occupancy = occ_list.occupancies[buildings[i].b_id].occupancy
-				var json = {b_id : occupancy};
+				var json = {};
+				json.b_id = b_id;
+				json.occupancy = occupancy;
 				occupancies.push(json);
 
 				total_occupancy += occupancy;
