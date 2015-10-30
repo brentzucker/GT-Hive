@@ -4,6 +4,9 @@ global.hostname = require('os').hostname();
 global.port = 8080;
 global.cache_time_to_live = 5 * 60 * 1000; // 5 minutes
 
+// Import List of Buildings and Rooms
+global.buildings_rooms = JSON.parse(getBuildingRoomsTextFile());
+
 /* Configure Express with Node */
 
 var express = require('express');
@@ -82,7 +85,6 @@ app.get('/api/locationinfo/all', function (request, response) {
 				global.count++;
 				var locationinfo_obj = JSON.parse(data);
 				for (id in locationinfo_obj.occupancies) {
-					console.log(id);
 					global.occupancies[id] = locationinfo_obj.occupancies[id];
 				}
 
@@ -140,8 +142,10 @@ app.get('/api/locationinfo/:str', function (request, response) {
 					json.room = buildings[i].room;
 				}
 				
+				// Store the id of the location_obj as a key
 				occupancies[id] = json;
 
+				// Count all the occupancies 
 				total_occupancy += occupancy;
 			}
 			var final_json = {};
@@ -163,14 +167,12 @@ function requestOccupancies(response, location_list, type_of_request) {
 		var txt = readCachedOccupancies(type_of_request);
 		var cached_timestamp = (JSON.parse(txt)).timestamp;
 		var current_time = new Date().getTime();
-		console.log('current_time: ' + current_time);
-		console.log('timestamp: ' + cached_timestamp);
 
 		if (cached_timestamp + global.cache_time_to_live < current_time) {
-			console.log('Cache Expired. Requesting GTWhereAmI.');
+			console.log('Cache Expired. Requesting GTWhereAmI: ' + type_of_request);
 		} else {
 			isCacheExpired = false;
-			console.log('Cached Response');
+			console.log('Cached Response: ' + type_of_request);
 			response.send(txt);
 		}
 	} catch (err) {
@@ -297,14 +299,14 @@ function readFromTextFile(filename) {
 
 function getBuildingsTextFile() {
 	var filename = 'building_ids_names.txt';
-	var json = readFromTextFile(filename);
-	return json;
+	var txt = readFromTextFile(filename);
+	return txt;
 }
 
 function getBuildingRoomsTextFile() {
 	var filename = 'buildings_rooms.txt';
-	var json = readFromTextFile(filename);
-	return json;
+	var txt = readFromTextFile(filename);
+	return txt;
 }
 
 function writeToTextFile(filename, data) {
@@ -356,22 +358,53 @@ function parseBuildingString(str) {
 		if (tokens[i].split("=").length === 2 && tokens[i].split("=")[0] === "b_id") {
 
 			// i.e. [b_id, 81-337] or [b_id, 81]
-			var b_id_raw_array = tokens[i].split("=");
+			var bid_raw_array = tokens[i].split("=");
 
 			// i.e. [81] or [81, 337]
-			var b_id_array = b_id_raw_array[1].split("-");
-
+			var bid = bid_raw_array[1],
+				bid_room = bid_raw_array[1].split("-"),
+				bid_floor = bid_raw_array[1].split("_");
+			
 			var building = {};
-			if (b_id_array.length > 0  && b_id_array[0] != '') {
-				building.b_id = b_id_array[0];
 
-				if (b_id_array.length == 2) {
-					building.room = b_id_array[1];
+			if (bid_room.length > bid_floor.length) {
+				
+				if (bid_room.length > 0  && bid_room[0] != '') {
+					building.b_id = b_id_array[0];
+
+					if (b_id_array.length == 2) {
+						building.room = bid_room[1];
+					}
+					buildings.push(building);
+				} else {
+					// bad request
 				}
-				buildings.push(building);
-			} else {
-				// bad request
+			} else if (bid_room.length < bid_floor.length) {
+				// floors
+				var b_id = bid_floor[0];
+				var floor = bid_floor[1];
+
+				// Find the correct building
+				var building_obj;
+				for (var i = 0; i < global.buildings_rooms.buildings.length; i++) {
+					if (b_id === global.buildings_rooms.buildings[i].b_id) {
+						building_obj = global.buildings_rooms.buildings[i];
+						break;
+					}
+				}
+				
+				// Add all the rooms on the floor to the buildings array
+				for (var i = 0; i < building_obj[floor].length; i++) {
+					buildings.push({'b_id': b_id,
+									'room': building_obj[floor][i]});
+				}
+				console.log(buildings);
+			} else if (bid_room.length == bid_floor.length) {
+				// just b_id
+				console.log('bid ' + bid);
+
 			}
+
 		} else {
 			// bad request
 			// response.send('Bad Request: ' + str);
