@@ -117,29 +117,36 @@ app.get('/api/locationinfo/:str', function (request, response) {
 		res.on("end", function() {
 			var occ_list = JSON.parse(data);
 
-			var occupancies = [];
+			var occupancies = {};
 			var total_occupancy = 0;
 			for (var i = 0; i < buildings.length; i++) {
 
-				var b_id = buildings[i].b_id;
-				var occupancy;
-				try {
-					console.log(buildings[i].b_id);
-					occupancy = occ_list.occupancies[buildings[i].b_id].occupancy;
-				} catch (err) {
-					occupancy = -1;
+				var occupancy,
+					id = buildings[i].b_id;
+				if (typeof(buildings[i].room) !== 'undefined') {
+					id += '-' + buildings[i].room;
 				}
-				console.log('occupancy ' + occupancy);
+				try {
+					occupancy = occ_list.occupancies[id].occupancy;
+				} catch (err) {
+					occupancy = 0;
+				}
+
 				var json = {};
-				json.b_id = b_id;
+				json.b_id = buildings[i].b_id;
 				json.occupancy = occupancy;
-				occupancies.push(json);
+
+				if (typeof(buildings[i].room) !== 'undefined') {
+					json.room = buildings[i].room;
+				}
+				
+				occupancies[id] = json;
 
 				total_occupancy += occupancy;
 			}
 			var final_json = {};
-			final_json['total_occupancy'] = total_occupancy;
-			final_json['occupancies'] = occupancies;
+			final_json.total_occupancy = total_occupancy;
+			final_json.occupancies = occupancies;
 			response.send(final_json);
 		});
 	});
