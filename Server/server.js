@@ -329,26 +329,6 @@ function readCachedOccupancies(type_of_request) {
 	return readFromTextFile(filename);
 }
 
-// Returns building id's and names [{"b_id": <id-(String)>, "name": <name-(String)>},...]
-function parseBuildingsInfo(buildings_info) {
-
-	var buildings_info_obj = JSON.parse(buildings_info);
-
-	var json = '{[';
-	for (var i = 0 ; i < buildings_info_obj.length; i++) {
-
-		json += '{';
-		json += '"b_id": "' + buildings_info_obj[i].b_id + '"';
-		json += ', ';
-		json += '"name": "' + buildings_info_obj[i].name + '"';
-		json += '}';
-		if (i + 1 < buildings_info_obj.length) json += ', ';
-	}
-	json += ']}';
-
-	return json;
-}
-
 // Parse dynamic endpoint return array of buildings (i.e. b_id=81&b_id=33 => [b_id: 81, b_id: 33])
 function parseBuildingString(str) {
 	var tokens = str.split("&");
