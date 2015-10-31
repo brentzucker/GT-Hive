@@ -367,50 +367,53 @@ function parseBuildingString(str) {
 			
 			var building = {};
 
+			var b_id, room, floor;
 			if (bid_room.length > bid_floor.length) {
+				b_id = bid_room[0];
+				room = bid_room[1];
 				
-				if (bid_room.length > 0  && bid_room[0] != '') {
-					building.b_id = b_id_array[0];
+				if (bid_room.length == 2  && b_id != '') {
+					building.b_id = b_id;
+					building.room = room;
 
-					if (b_id_array.length == 2) {
-						building.room = bid_room[1];
-					}
 					buildings.push(building);
-				} else {
-					// bad request
-				}
+				} // else bad request
 			} else if (bid_room.length < bid_floor.length) {
 				// floors
-				var b_id = bid_floor[0];
-				var floor = bid_floor[1];
+				b_id = bid_floor[0];
+				floor = bid_floor[1];
 
 				// Find the correct building
-				var building_obj;
-				for (var i = 0; i < global.buildings_rooms.buildings.length; i++) {
-					if (b_id === global.buildings_rooms.buildings[i].b_id) {
-						building_obj = global.buildings_rooms.buildings[i];
-						break;
-					}
-				}
+				var building_obj = getBuildingObject(b_id);
 				
 				// Add all the rooms on the floor to the buildings array
 				for (var i = 0; i < building_obj[floor].length; i++) {
 					buildings.push({'b_id': b_id,
 									'room': building_obj[floor][i]});
 				}
-				console.log(buildings);
-			} else if (bid_room.length == bid_floor.length) {
+			} else if (bid_room.length == bid_floor.length && bid_room.length == 1) {
 				// just b_id
-				console.log('bid ' + bid);
+				building.b_id = bid;
 
-			}
-
+				buildings.push(building);
+			} // else bad request
 		} else {
 			// bad request
-			// response.send('Bad Request: ' + str);
+			console.log('Bad Request: ' + str);
 			buildings = [];
 			break;
 		}
 	}
 	return buildings;
+}
+
+function getBuildingObject(b_id) {
+	var building_obj;
+	for (var i = 0; i < global.buildings_rooms.buildings.length; i++) {
+		if (b_id === global.buildings_rooms.buildings[i].b_id) {
+			building_obj = global.buildings_rooms.buildings[i];
+			break;
+		}
+	}
+	return building_obj;
 }
