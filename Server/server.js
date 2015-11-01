@@ -37,6 +37,20 @@ app.get('/api/rooms', function (request, response) {
 	response.send(json);
 });
 
+// Array of rooms for specific b_id
+app.get('/api/rooms/:str', function (request, response) {
+	var str = request.params.str;
+	var b_id = str.substring('b_id='.length);
+
+	var rooms = getBuildingObject(b_id);
+
+	if (rooms != undefined) {
+		response.send(rooms);
+	} else {
+		response.send({});
+	}
+});
+
 // Location info of All Buildings
 app.get('/api/locationinfo/buildings', function (request, response) {
 	
@@ -274,7 +288,7 @@ function requestOccupancies(response, location_list, type_of_request) {
 						global.occupancies[ap] = json_obj;
 				    }
 					global.count[type_of_request]++;
-					console.log(global.count[type_of_request] + '?=' + location_list.length);
+					// console.log(global.count[type_of_request] + '?=' + location_list.length);
 
 					// Return json string when all occupancy requests have terminated
 					if (global.count[type_of_request] >= location_list.length) {
