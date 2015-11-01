@@ -3,6 +3,7 @@
 global.hostname = require('os').hostname();
 global.port = 8080;
 global.cache_time_to_live = 5 * 60 * 1000; // 5 minutes
+global.count = {};
 
 // Import List of Buildings and Rooms
 global.buildings_rooms = JSON.parse(getBuildingRoomsTextFile());
@@ -70,7 +71,7 @@ app.get('/api/locationinfo/all', function (request, response) {
 	
 	var url = 'http://' + global.hostname + ':' + global.port;
 
-	global.count = 0;
+	global.count_all = 0;
 	global.occupancies = {};
 
 	for (var i = 0; i < uris.length; i++) {
@@ -82,13 +83,13 @@ app.get('/api/locationinfo/all', function (request, response) {
 			});
 
 			res.on("end", function() {
-				global.count++;
+				global.count_all++;
 				var locationinfo_obj = JSON.parse(data);
 				for (id in locationinfo_obj.occupancies) {
 					global.occupancies[id] = locationinfo_obj.occupancies[id];
 				}
 
-				if (global.count == uris.length) {
+				if (global.count_all == uris.length) {
 					var final_json = {};
 					final_json.occupancies = global.occupancies;
 					response.send(final_json);
@@ -162,12 +163,14 @@ app.get('/api/locationinfo/:str', function (request, response) {
 
 function requestOccupancies(response, location_list, type_of_request) {
 
-	var isCacheExpired = true;
+	var isCacheExpired = true,
+		current_time = new Date().getTime(),
+		txt,
+		cached_timestamp;
 	try {
-		var txt = readCachedOccupancies(type_of_request);
-		var cached_timestamp = (JSON.parse(txt)).timestamp;
-		var current_time = new Date().getTime();
-
+		txt = readCachedOccupancies(type_of_request);
+		cached_timestamp = (JSON.parse(txt)).timestamp;
+		
 		if (cached_timestamp + global.cache_time_to_live < current_time) {
 			console.log('Cache Expired. Requesting GTWhereAmI: ' + type_of_request);
 		} else {
@@ -177,6 +180,7 @@ function requestOccupancies(response, location_list, type_of_request) {
 		}
 	} catch (err) {
 		console.log(err);
+		cached_timestamp = 0;
 	}
 	
 	if (isCacheExpired) {
@@ -204,7 +208,7 @@ function requestOccupancies(response, location_list, type_of_request) {
 
 			// Global Variables to keep track of asynchronous calls
 			global.occupancies = {};
-			global.count = 0;
+			global.count[type_of_request] = 0;
 
 			// Custom URL structure for type_of_request
 			var url, b_id, room_no;
@@ -269,15 +273,17 @@ function requestOccupancies(response, location_list, type_of_request) {
 						// Push building object to global array
 						global.occupancies[ap] = json_obj;
 				    }
-					global.count++;
+					global.count[type_of_request]++;
+					console.log(global.count[type_of_request] + '?=' + location_list.length);
 
 					// Return json string when all occupancy requests have terminated
-					if (global.count >= location_list.length) {
+					if (global.count[type_of_request] >= location_list.length) {
 
 						var final_json = {};
 						final_json.timestamp = new Date().getTime();
 						final_json.occupancies = global.occupancies;
 						cacheOccupancies(type_of_request, final_json); // Write occupancies to text file
+						console.log('send: ' + type_of_request);
 						response.send(final_json);
 						console.log('Occupancies Request Complete: ' + type_of_request);
 					}
