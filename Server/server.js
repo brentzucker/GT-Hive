@@ -22,7 +22,13 @@ app.listen(global.port);
  * * * * * * * * * * * * */
 
 // import http module
-global.http = require('http'); 
+global.http = require('http');
+
+// Documentation for API
+app.get('/api/', function (request, response) {
+	var html = getAPIIndexPage();
+	response.send(html);
+});
 
 // Array of all Buildings (b_id, name)
 app.get('/api/buildings', function (request, response) {
@@ -325,6 +331,12 @@ function getBuildingsTextFile() {
 
 function getBuildingRoomsTextFile() {
 	var filename = 'buildings_rooms.txt';
+	var txt = readFromTextFile(filename);
+	return txt;
+}
+
+function getAPIIndexPage() {
+	var filename = 'APIDocumentation.html';
 	var txt = readFromTextFile(filename);
 	return txt;
 }
