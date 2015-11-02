@@ -74,8 +74,6 @@ public class BuildingListFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = BuildingPagerActivity.newIntent(getActivity(), mBuilding.getId());
                 startActivity(intent);
-//                Toast.makeText(getActivity(), mBuilding.getName() + ": " + mBuilding.getOccupancy(), Toast.LENGTH_SHORT)
-//                        .show();
             }
     }
 
