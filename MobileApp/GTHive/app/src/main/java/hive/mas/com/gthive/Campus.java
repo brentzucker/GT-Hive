@@ -10,6 +10,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -52,14 +54,8 @@ public class Campus {
             Log.e(TAG, e.toString());
         }
 
-//        // Use fake buildings for now
-//        mBuildings = new ArrayList<>();
-//        for (int i = 0; i < 255; i++) {
-//            String id = "" + i;
-//            String name = "Building #" + i;
-//            Building building = new Building(id, name);
-//            mBuildings.add(building);
-//        }
+        // Sort mBuildings Alphabetically
+        sortBuildings();
     }
 
     public List<Building> getBuildings() {
@@ -103,5 +99,16 @@ public class Campus {
             }
         }
         return file_contents;
+    }
+
+    private void sortBuildings() {
+
+        Collections.sort(mBuildings, new Comparator<Building>() {
+
+            @Override
+            public int compare(Building b1, Building b2) {
+                return b1.getName().compareToIgnoreCase(b2.getName());
+            }
+        });
     }
 }
