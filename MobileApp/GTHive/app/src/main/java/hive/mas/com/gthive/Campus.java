@@ -3,6 +3,11 @@ package hive.mas.com.gthive;
 import android.content.Context;
 import android.util.Log;
 
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,6 +17,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -56,6 +62,9 @@ public class Campus {
 
         // Sort mBuildings Alphabetically
         sortBuildings();
+
+        // Get Occupancies for all buildings
+        getOccupancies();
     }
 
     public List<Building> getBuildings() {
@@ -108,6 +117,59 @@ public class Campus {
             @Override
             public int compare(Building b1, Building b2) {
                 return b1.getName().compareToIgnoreCase(b2.getName());
+            }
+        });
+    }
+
+    private void getOccupancies() {
+        // https://guides.codepath.com/android/Using-OkHttp
+        // Enable Internet Access on Android Emulator: http://stackoverflow.com/questions/20865588/enable-internet-access-on-android-emulator-using-android-studio
+        String domain = "http://104.236.76.46:8080";
+        String uri = "/api/locationinfo/buildings";
+        String url = domain + uri;
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Request request, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(final Response response) throws IOException {
+
+                // Read data on the worker thread
+                final String responseData = response.body().string();
+
+                try {
+                    /* Parse JSON to list out each Building */
+                    JSONObject jsonRootObject = new JSONObject(responseData);
+
+                    // Get dictionary of buildings
+                    JSONObject jsonBuildingsDictionary = jsonRootObject.optJSONObject("occupancies");
+                    Iterator<?> b_ids = jsonBuildingsDictionary.keys();
+
+                    while (b_ids.hasNext()) {
+                        String b_id = (String) b_ids.next();
+                        if (jsonBuildingsDictionary.get(b_id) instanceof JSONObject) {
+                            JSONObject jsonBuilding = (JSONObject) jsonBuildingsDictionary.get(b_id);
+
+                            int occupancy = jsonBuilding.optInt("occupancy");
+
+                            Log.i(TAG, b_id + ": " + occupancy);
+                        }
+                    }
+
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
