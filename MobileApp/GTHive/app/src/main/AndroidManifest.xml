@@ -18,6 +18,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".BuildingPagerActivity"
+            android:label="BuildingIntent" >
+        </activity>
+
     </application>
 
 </manifest>
