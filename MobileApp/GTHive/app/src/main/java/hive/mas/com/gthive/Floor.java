@@ -13,12 +13,11 @@ public class Floor extends Location {
     public Floor(String id) {
         super(id);
         String[] id_arr = id.split("_");
-        mFloorNumber = (id_arr.length > 1 ? id_arr[1] : "null");
+        mFloorNumber = (id_arr.length > 1 ? id_arr[1].charAt(0) : 'n');
     }
 
-    public Floor(String BId, String floorNumber) {
-        String id = BId + "_" + floorNumber;
-        super(id);
+    public Floor(String bId, char floorNumber) {
+        super(bId + "_" + floorNumber);
         mFloorNumber = floorNumber;
     }
 

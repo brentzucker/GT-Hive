@@ -16,11 +16,10 @@ public class Room extends Location {
         mFloorNumber = mRoomNumber.charAt(0);
     }
 
-    public Room(String id, String name) {
-        super(id, name);
+    public Room(String bId, String roomNumber) {
+        super(bId + "-" + roomNumber);
 
-        String[] id_arr = id.split("-");
-        mRoomNumber = (id_arr.length > 1 ? id_arr[1] : "null");
+        mRoomNumber = roomNumber;
         mFloorNumber = mRoomNumber.charAt(0);
     }
 

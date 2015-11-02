@@ -40,25 +40,9 @@ public class Campus {
     private Campus(Context context) {
         mBuildings = new ArrayList<>();
 
-        // Read in Buildings from Text File
-        String txt = readBuildingsTxt();
+        mBuildings = loadBuildings();
 
-        // Parse JSON
-        try {
-            JSONObject rootJSON = new JSONObject(txt);
-            JSONArray buildingsJSON = rootJSON.getJSONArray("buildings");
-            for (int i = 0; i < buildingsJSON.length(); i++) {
-
-                JSONObject buildingJSON = buildingsJSON.getJSONObject(i);
-                String id = buildingJSON.getString("b_id");
-                String name = buildingJSON.getString("name");
-
-                Building building = new Building(id, name);
-                mBuildings.add(building);
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, e.toString());
-        }
+        mBuildings = loadRooms(mBuildings);
 
         // Sort mBuildings Alphabetically
         sortBuildings();
@@ -80,14 +64,13 @@ public class Campus {
         return null;
     }
 
-    private String readBuildingsTxt() {
-        String filename = "buildings.txt";
-
+    private String readTxt(String filename) {
+        Log.i("readTxt()", filename);
         InputStream in  = null;
         int c;
         String file_contents = "";
         try {
-            String file = "assets/buildings.txt";
+            String file = "assets/" + filename;
             in = this.getClass().getClassLoader().getResourceAsStream(file);
 
             // real until the end of the stream
@@ -98,16 +81,113 @@ public class Campus {
             }
         } catch (IOException e) {
             //log the exception
+            Log.e(TAG + ".readTxt()", e.toString());
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException e) {
                     //log the exception
+                    Log.e(TAG + ".readTxt()", e.toString());
                 }
             }
         }
+        Log.i("readTxt().file_contents", file_contents);
         return file_contents;
+    }
+
+    private String readBuildingsTxt() {
+        String filename = "buildings.txt";
+        return readTxt(filename);
+    }
+
+    private String readRoomsTxt() {
+        String filename = "rooms.txt";
+        return readTxt(filename);
+    }
+
+    private List<Building> loadBuildings() {
+        // Read in Buildings from Text File
+        String txt = readBuildingsTxt();
+
+        List<Building> buildings = new ArrayList<>();
+
+        // Parse JSON
+        try {
+            JSONObject rootJSON = new JSONObject(txt);
+            JSONArray buildingsJSON = rootJSON.getJSONArray("buildings");
+            for (int i = 0; i < buildingsJSON.length(); i++) {
+
+                JSONObject buildingJSON = buildingsJSON.getJSONObject(i);
+                String id = buildingJSON.getString("b_id");
+                String name = buildingJSON.getString("name");
+
+                Building building = new Building(id, name);
+                buildings.add(building);
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, e.toString());
+        }
+        return buildings;
+    }
+
+    private List<Building> loadRooms(List<Building> buildings) {
+        // Read in Buildings from Text File
+        String txt = readRoomsTxt();
+
+        // Parse JSON
+        try {
+            JSONObject rootJSON = new JSONObject(txt);
+            JSONArray buildingsJSON = rootJSON.getJSONArray("buildings");
+            for (int i = 0; i < buildingsJSON.length(); i++) {
+
+                JSONObject buildingJSON = buildingsJSON.getJSONObject(i);
+
+                // Get Building Id
+                String bId = buildingJSON.getString("b_id");
+
+                // Load JSON Rooms into List<Room>
+                JSONArray jsonRooms = buildingJSON.getJSONArray("rooms");
+                List<Room> rooms = new ArrayList<>();
+                for (int j = 0; j < jsonRooms.length(); j++) {
+                    rooms.add(new Room(bId, jsonRooms.get(j).toString()));
+                }
+
+                // Load JSON Floors into List<Floor>
+                JSONArray jsonFloors = buildingJSON.getJSONArray("floors");
+                List<Floor> floors = new ArrayList<>();
+                for (int j = 0; j < jsonFloors.length(); j++) {
+                    floors.add(new Floor(bId, jsonFloors.get(j).toString().charAt(0)));
+                }
+
+                Log.i(TAG + ".loadRooms().bId", bId);
+                Log.i(TAG + ".mBuildings", mBuildings.toString());
+
+                // Get building object from mBuildings
+                Building building = null;
+                for (Building b : mBuildings) {
+                    if (b.getId().equals(bId)) {
+                        building = b;
+                        break;
+                    }
+                }
+
+                if (building != null) {
+
+                    building.setRooms(rooms);
+                    building.setFloors(floors);
+
+                    Log.i(bId, building.getRooms().toString());
+                    Log.i(bId, building.getFloors().toString());
+                } else {
+                    Log.i(TAG + ".loadRooms() Building Null", bId);
+                }
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, e.toString());
+        }
+
+        return buildings;
     }
 
     private void sortBuildings() {
