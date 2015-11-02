@@ -7,6 +7,7 @@ public class Building {
 
     private String mId;
     private String mName;
+    private int mOccupancy;
 
     public Building(String id, String name) {
         mId = id;
@@ -21,11 +22,19 @@ public class Building {
         return mName;
     }
 
+    public int getOccupancy() {
+        return mOccupancy;
+    }
+
     public void setId(String id) {
         mId = id;
     }
 
     public void setName(String name) {
         mName = name;
+    }
+
+    public void setOccupancy(int occupancy) {
+        mOccupancy = occupancy;
     }
 }

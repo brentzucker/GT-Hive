@@ -64,7 +64,7 @@ public class Campus {
         sortBuildings();
 
         // Get Occupancies for all buildings
-        getOccupancies();
+        updateOccupancies();
     }
 
     public List<Building> getBuildings() {
@@ -121,7 +121,7 @@ public class Campus {
         });
     }
 
-    private void getOccupancies() {
+    private void updateOccupancies() {
         // https://guides.codepath.com/android/Using-OkHttp
         // Enable Internet Access on Android Emulator: http://stackoverflow.com/questions/20865588/enable-internet-access-on-android-emulator-using-android-studio
         String domain = "http://104.236.76.46:8080";
@@ -162,10 +162,12 @@ public class Campus {
 
                             int occupancy = jsonBuilding.optInt("occupancy");
 
+                            // Update the occupancy of the building
+                            getBuilding(b_id).setOccupancy(occupancy);
+
                             Log.i(TAG, b_id + ": " + occupancy);
                         }
                     }
-
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
