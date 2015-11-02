@@ -12,14 +12,20 @@ public class Location {
 
     public Location(String id) {
         mId = id;
-        mBId = (id.split("-"))[0];
+        loadBId();
     }
 
     public Location(String id, String name) {
         mId = id;
-        mBId = (id.split("-"))[0];
+        loadBId();
         mName = name;
     }
+
+    private void loadBId() {
+        mBId = (mId.split("-|_"))[0];
+    }
+
+    /* Accessors and Modifiers */
 
     public String getId() {
         return mId;
