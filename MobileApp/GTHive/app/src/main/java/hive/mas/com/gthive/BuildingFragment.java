@@ -17,6 +17,10 @@ public class BuildingFragment extends android.support.v4.app.Fragment {
     private TextView mNameTextView;
     private TextView mOccupancyTextView;
 
+    // Temporary text views to just print building structure
+    private TextView mFloorsTextView;
+    private TextView mRoomsTextView;
+
     public static BuildingFragment newInstance(String buildingId) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_BUILDING_ID, buildingId);
@@ -42,6 +46,12 @@ public class BuildingFragment extends android.support.v4.app.Fragment {
 
         mOccupancyTextView = (TextView) v.findViewById(R.id.occupancy);
         mOccupancyTextView.setText("" + mBuilding.getOccupancy());
+
+        mFloorsTextView = (TextView) v.findViewById(R.id.floors);
+        mFloorsTextView.setText(mBuilding.getFloorNumbers());
+
+        mRoomsTextView = (TextView) v.findViewById(R.id.rooms);
+        mRoomsTextView.setText(mBuilding.getRoomNumbers());
 
         return v;
     }

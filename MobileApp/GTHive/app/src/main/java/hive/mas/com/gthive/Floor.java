@@ -1,5 +1,6 @@
 package hive.mas.com.gthive;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,11 +15,13 @@ public class Floor extends Location {
         super(id);
         String[] id_arr = id.split("_");
         mFloorNumber = (id_arr.length > 1 ? id_arr[1].charAt(0) : 'n');
+        mRooms = new ArrayList<>();
     }
 
     public Floor(String bId, char floorNumber) {
         super(bId + "_" + floorNumber);
         mFloorNumber = floorNumber;
+        mRooms = new ArrayList<>();
     }
 
     /* Accessors and Modifiers */

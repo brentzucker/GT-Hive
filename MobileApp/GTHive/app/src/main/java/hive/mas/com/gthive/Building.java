@@ -1,5 +1,6 @@
 package hive.mas.com.gthive;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,10 +13,32 @@ public class Building extends Location {
 
     public Building(String id) {
         super(id);
+        mRooms = new ArrayList<>();
+        mFloors = new ArrayList<>();
     }
 
     public Building(String id, String name) {
         super(id, name);
+        mRooms = new ArrayList<>();
+        mFloors = new ArrayList<>();
+    }
+
+    // Returns a String of Floor Numbers
+    public String getFloorNumbers() {
+        String floors = "";
+        for (Floor f : getFloors()) {
+            floors += f.getFloorNumber() + " ";
+        }
+        return floors;
+    }
+
+    // Returns a String of Room Numbers
+    public String getRoomNumbers() {
+        String rooms = "";
+        for (Room r : getRooms()) {
+            rooms += r.getRoomNumber() + " ";
+        }
+        return rooms;
     }
 
     /* Accessors and Modifiers */

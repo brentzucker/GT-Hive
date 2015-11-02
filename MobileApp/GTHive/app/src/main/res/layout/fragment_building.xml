@@ -16,4 +16,16 @@
         android:layout_height="wrap_content"
         style="?android:listSeparatorTextViewStyle"/>
 
+    <TextView
+        android:id="@+id/floors"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:listSeparatorTextViewStyle"/>
+
+    <TextView
+        android:id="@+id/rooms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:listSeparatorTextViewStyle"/>
+
 </LinearLayout>

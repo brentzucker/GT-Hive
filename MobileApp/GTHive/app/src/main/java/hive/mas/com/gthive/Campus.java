@@ -160,9 +160,6 @@ public class Campus {
                     floors.add(new Floor(bId, jsonFloors.get(j).toString().charAt(0)));
                 }
 
-                Log.i(TAG + ".loadRooms().bId", bId);
-                Log.i(TAG + ".mBuildings", mBuildings.toString());
-
                 // Get building object from mBuildings
                 Building building = null;
                 for (Building b : mBuildings) {
@@ -176,9 +173,6 @@ public class Campus {
 
                     building.setRooms(rooms);
                     building.setFloors(floors);
-
-                    Log.i(bId, building.getRooms().toString());
-                    Log.i(bId, building.getFloors().toString());
                 } else {
                     Log.i(TAG + ".loadRooms() Building Null", bId);
                 }
@@ -186,7 +180,6 @@ public class Campus {
         } catch (JSONException e) {
             Log.e(TAG, e.toString());
         }
-
         return buildings;
     }
 
