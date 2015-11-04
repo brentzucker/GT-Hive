@@ -35,7 +35,7 @@ building_dict = {}
 
 # Used for development
 test_run = 1000
-count = 0
+
 
 # During test read this specific file
 # In production, loop through days, months, etc
@@ -45,6 +45,7 @@ day_first = 6
 day_last = 9
 
 for d in range(day_first, day_last):
+	test_count = 0 # Used for Development
 	day = str(d).zfill(2)
 
 	# Unzip file
@@ -59,8 +60,8 @@ for d in range(day_first, day_last):
 		log_entry = line.split(" ")
 
 		# Test so the file doesn't have to be completely read
-		count += 1
-		if count == test_run:
+		test_count += 1
+		if test_count == test_run:
 			break
 
 		# If the log_entry's length != 22 then it's a bad entry
