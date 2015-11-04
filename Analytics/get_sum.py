@@ -51,9 +51,9 @@ for line in contents:
 	log_entry = line.split(" ")
 
 	# Test so the file doesn't have to be completely read
-	count += 1
-	if count == test_run:
-		break
+	# count += 1
+	# if count == test_run:
+	# 	break
 
 	# If the log_entry's length != 22 then it's a bad entry
 	if len(log_entry) == 22:
@@ -70,47 +70,47 @@ for line in contents:
 			ap = ap_array[2]
 
 		# Mon-d-Year_hh
-		date_hour = log_entry[0] +'-'+ log_entry[2] +'-'+ year +'_'+ log_entry[3][:2]
-		date_hour = month +'-'+ day +'-'+ year +'_'+ log_entry[3][:2]
-
-
-		# Access Points
-		if ap_id in ap_dict:
-			ap_dict[ap_id] = ap_dict[ap_id] + 1
-		else:
-			ap_dict[ap_id] = 1
+		date = month + '-' + day + '-' + year
+		hour = log_entry[3][:2]
 
 		# Buildings
-		if b_id in building_dict:
-			building_dict[b_id]['total']['count_users'] += 1
-
-			# Change it to a list because a set can not be converted to json
-			unique_users = set(building_dict[b_id]['total']['users_unique'])
-			unique_users.add(log_entry[7])
-			building_dict[b_id]['total']['users_unique'] = list(unique_users)
-			building_dict[b_id]['total']['count_users_unique'] = len(building_dict[b_id]['total']['users_unique'])
-
-		else:
+		if b_id not in building_dict:
 			building_dict[b_id] = {}
-			building_dict[b_id]['total'] = {}
-			building_dict[b_id]['total']['count_users'] = 1
-			building_dict[b_id]['total']['users_unique'] = list(set([log_entry[7]])) # Change it to a list because a set can not be converted to json
-			building_dict[b_id]['total']['count_users_unique'] = len(building_dict[b_id]['total']['users_unique'])
 
-		if date_hour in building_dict[b_id]:
-			building_dict[b_id][date_hour]['count_users'] += 1
+		if date in building_dict[b_id]:
+			if hour in building_dict[b_id][date]:
+				building_dict[b_id][date][hour]['count_users'] += 1
 			
-			# Change it to a list because a set can not be converted to json
-			unique_users = set(building_dict[b_id][date_hour]['users_unique'])
+				# Change it to a list because a set can not be converted to json
+				unique_users = set(building_dict[b_id][date][hour]['users_unique'])
+				unique_users.add(log_entry[7])
+				building_dict[b_id][date][hour]['users_unique'] = list(unique_users)
+				building_dict[b_id][date][hour]['count_users_unique'] = len(building_dict[b_id][date][hour]['users_unique'])
+ 			else:
+ 				building_dict[b_id][date][hour] = {}
+ 				building_dict[b_id][date][hour]['count_users'] = 1
+				building_dict[b_id][date][hour]['users_unique'] = list(set([log_entry[7]])) # Change it to a list because a set can not be converted to json
+				building_dict[b_id][date][hour]['count_users_unique'] = len(building_dict[b_id][date][hour]['users_unique'])
+			
+			# Keep track of totals for that date
+			building_dict[b_id][date]['total']['count_users'] += 1
+			unique_users = set(building_dict[b_id][date]['total']['users_unique'])
 			unique_users.add(log_entry[7])
-			building_dict[b_id][date_hour]['users_unique'] = list(unique_users)
-			building_dict[b_id][date_hour]['count_users_unique'] = len(building_dict[b_id][date_hour]['users_unique'])
- 
+			building_dict[b_id][date]['total']['users_unique'] = list(unique_users)
+			building_dict[b_id][date]['total']['count_users_unique'] = len(building_dict[b_id][date]['total']['users_unique'])
+
 		else:
-			building_dict[b_id][date_hour] = {}
-			building_dict[b_id][date_hour]['count_users'] = 1
-			building_dict[b_id][date_hour]['users_unique'] = list(set([log_entry[7]])) # Change it to a list because a set can not be converted to json
-			building_dict[b_id][date_hour]['count_users_unique'] = len(building_dict[b_id][date_hour]['users_unique'])
+			building_dict[b_id][date] = {}
+			building_dict[b_id][date][hour] = {}
+			building_dict[b_id][date][hour]['count_users'] = 1
+			building_dict[b_id][date][hour]['users_unique'] = list(set([log_entry[7]])) # Change it to a list because a set can not be converted to json
+			building_dict[b_id][date][hour]['count_users_unique'] = len(building_dict[b_id][date][hour]['users_unique'])
+
+			# Keep track of totals for that date
+			building_dict[b_id][date]['total'] = {}
+			building_dict[b_id][date]['total']['count_users'] = 1
+			building_dict[b_id][date]['total']['users_unique'] = list(set([log_entry[7]]))
+			building_dict[b_id][date]['total']['count_users_unique'] = len(building_dict[b_id][date]['total']['users_unique'])
 
 # Print with list of unique users (Proof of Concept)
 print '\n\nDictionary (Exhaustive)\n\n'
@@ -118,11 +118,11 @@ pprint(building_dict)
 
 # Remove users_unique b/c it's not necessary for output
 for b_id in building_dict:
-	for date_hour in building_dict[b_id]:
-		del building_dict[b_id][date_hour]['users_unique']
+	for date in building_dict[b_id]:
+		for hour in building_dict[b_id]:
+			del building_dict[b_id][date][hour]['users_unique']
 
 print '\n\nDictionary (Abbreviated)\n\n'
-# pprint(ap_dict)
 pprint(building_dict)
 
 
