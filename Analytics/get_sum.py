@@ -6,25 +6,26 @@
 # nohup time python get_sum.py > get_sum.out 2> get_sum.err < /dev/null &
 
 # Log Entry Structure
-# [0, 1, 2, 3] datetime
-# [4] newdvlana/gtl-mower2
-# [5] lawninfo: 
-# [6] USER:
-# [7] hashed user
-# [8] MAC:
-# [9] mac address
-# [10] SSID:
-# [11] GTwifi
-# [12] VLAN:
-# [13] ### <- vlan number
-# [14] IP:
-# [15] 0.0.0.0 - 128...
-# [16] APMAC
-# [17] mac address
-# [18] APNAME:
-# [19] building-room
-# [20] AUTH:
-# [21] cache
+# [0, 1] date
+# [2] time
+# [3] newdvlana/gtl-mower2
+# [4] lawninfo: 
+# [5] USER:
+# [6] hashed user
+# [7] MAC:
+# [8] mac address
+# [9] SSID:
+# [10] GTwifi
+# [11] VLAN:
+# [12] ### <- vlan number
+# [13] IP:
+# [14] 0.0.0.0 - 128...
+# [15] APMAC
+# [16] mac address
+# [17] APNAME:
+# [18] building-room
+# [19] AUTH:
+# [20] cache
 
 import gzip
 import json
@@ -40,8 +41,8 @@ test_run = 1000
 # In production, loop through days, months, etc
 year = "2015"
 month = "04"
-day_first = 1
-day_last = 32
+day_first = 9
+day_last = 13
 
 for d in range(day_first, day_last):
 	test_count = 0 # Used for Development
@@ -60,7 +61,7 @@ for d in range(day_first, day_last):
 
 	# Read each line of the file
 	for line in contents:
-		log_entry = line.split(" ")
+		log_entry = line.split()
 
 		# Test so the file doesn't have to be completely read
 		# test_count += 1
@@ -68,14 +69,14 @@ for d in range(day_first, day_last):
 		# 	break
 
 		# If the log_entry's length != 22 then it's a bad entry
-		if len(log_entry) == 22:
-			ap_id = log_entry[19]
+		if len(log_entry) == 21:
+			ap_id = log_entry[18]
 			ap_array = ap_id.split("-")
 			b_id = ap_array[0]
 
 			# Mon-d-Year_hh
 			date = month + '-' + day + '-' + year
-			hour = log_entry[3][:2]
+			hour = log_entry[2][:2]
 
 			# Buildings
 			if b_id not in building_dict:
@@ -99,12 +100,12 @@ for d in range(day_first, day_last):
 
 			# Keep track of unique visitors per hour 	
 			unique_users = set(building_dict[b_id][date][hour]['users_unique'])
-			unique_users.add(log_entry[7])
+			unique_users.add(log_entry[6])
 			building_dict[b_id][date][hour]['users_unique'] = list(unique_users) # Change set to a list because a set can not be converted to json
 
 			# Keep track of unique visitors for date
 			unique_users = set(building_dict[b_id][date]['total']['users_unique'])
-			unique_users.add(log_entry[7])
+			unique_users.add(log_entry[6])
 			building_dict[b_id][date]['total']['users_unique'] = list(unique_users) # Change set to a list because a set can not be converted to json
 
 			# Count
@@ -114,8 +115,8 @@ for d in range(day_first, day_last):
 			building_dict[b_id][date]['total']['count_users_unique'] = len(building_dict[b_id][date]['total']['users_unique'])
 
 # Print with list of unique users (Proof of Concept)
-print '\n\nDictionary (Exhaustive)\n\n'
-pprint(building_dict)
+# print '\n\nDictionary (Exhaustive)\n\n'
+# pprint(building_dict)
 
 # Remove users_unique b/c it's not necessary for output
 for b_id in building_dict:
