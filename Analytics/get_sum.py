@@ -36,13 +36,14 @@ building_dict = {}
 
 # Used for development
 test_run = 1000
+test = False 
 
 # During test read this specific file
 # In production, loop through days, months, etc
 year = "2015"
 month = "04"
-day_first = 9
-day_last = 13
+day_first = 1
+day_last = 32
 
 for d in range(day_first, day_last):
 	test_count = 0 # Used for Development
@@ -64,9 +65,10 @@ for d in range(day_first, day_last):
 		log_entry = line.split()
 
 		# Test so the file doesn't have to be completely read
-		# test_count += 1
-		# if test_count == test_run:
-		# 	break
+		if test:
+			test_count += 1
+			if test_count == test_run:
+				break
 
 		# If the log_entry's length != 22 then it's a bad entry
 		if len(log_entry) == 21:
