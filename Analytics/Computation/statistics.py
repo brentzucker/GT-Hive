@@ -10,7 +10,7 @@ buildings = json.loads(txt)
 
 # Clean up buildings
 for b_id in buildings.keys():
-	# Remove Mac Addresses
+	# Remove entries with Mac Addresses representing buildings
 	if len(b_id.split(":")) == 6:
 		del buildings[b_id]
 	# Remove weird buildings (i.e. AP0007.7db6.01b8) 
@@ -123,10 +123,32 @@ for b_id in buildings.keys():
 			min_users_unique = buildings[b_id]['dates'][date]['min_users_unique']
 	buildings[b_id]['min_users_unique'] = min_users_unique
 
+# Calculate Median for each building
+for b_id in buildings.keys():
+	median = 0
+	users_unique = []
+	for date in buildings[b_id]['dates'].keys():
+		users_unique.append(buildings[b_id]['dates'][date]['median_users_unique'])
+	users_unique.sort()
+	median = users_unique[len(users_unique) / 2]
+	buildings[b_id]['median_users_unique'] = median
+
+# Calculate Average for each building
+for b_id in buildings.keys():
+	average = 0
+	users_unique = []
+	for date in buildings[b_id]['dates'].keys():
+		users_unique.append(buildings[b_id]['dates'][date]['average_users_unique'])
+	average = sum(users_unique) / len(users_unique)
+	buildings[b_id]['average_users_unique'] = average
+
+# Print in order
 for b_id in sorted(buildings.keys()):
 	print '\'' + b_id + '\'' 
 	print 'max: ' + str(buildings[b_id]['max_users_unique'])
 	print 'min: ' + str(buildings[b_id]['min_users_unique'])
+	print 'median: ' + str(buildings[b_id]['median_users_unique'])
+	print 'average: ' + str(buildings[b_id]['average_users_unique'])
 	for date in sorted(buildings[b_id]['dates'].keys()):
 		print '\t' + date
 		print '\t\t' + 'max: ' + str(buildings[b_id]['dates'][date]['max_users_unique'])
@@ -136,7 +158,6 @@ for b_id in sorted(buildings.keys()):
 		for hour in sorted(buildings[b_id]['dates'][date]['hours'].keys()):
 			print '\t\t\t' + hour + ': ' + str(buildings[b_id]['dates'][date]['hours'][hour]['count_users_unique'])
 		print '\t\t' + 'total: ' + str(buildings[b_id]['dates'][date]['total']['count_users_unique'])
-
 
 
 
