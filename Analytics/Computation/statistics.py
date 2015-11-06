@@ -47,10 +47,53 @@ for h in range(0, 24):
 				buildings[b_id][date][hour]['count_users_unique'] = 0
 				buildings[b_id][date][hour]['count_users'] = 0
 
+# Move all hours into 'hours' dict
+for b_id in buildings.keys():
+	for date in buildings[b_id].keys():
+		hours = {}
+		for hour in buildings[b_id][date].keys():
+			if hour != 'total':
+				hours[hour] = buildings[b_id][date][hour]
+				del buildings[b_id][date][hour]
+		buildings[b_id][date]['hours'] = hours
+
+# Calculate Max for each day
+for b_id in buildings.keys():
+	for date in buildings[b_id].keys():
+		max_users_unique = -1
+		for hour in buildings[b_id][date]['hours'].keys():
+			if buildings[b_id][date]['hours'][hour]['count_users_unique'] > max_users_unique:
+				max_users_unique = buildings[b_id][date]['hours'][hour]['count_users_unique']
+		buildings[b_id][date]['max_users_unique'] = max_users_unique
+
 for b_id in sorted(buildings.keys()):
-	print b_id 
+	print '\'' + b_id + '\'' 
 	for date in sorted(buildings[b_id].keys()):
 		print '\t' + date
-		hours = []
-		for hour in sorted(buildings[b_id][date].keys()):
-			print '\t\t' + hour + ': ' + str(buildings[b_id][date][hour]['count_users_unique'])
+		print '\t\t' + 'max: ' + str(buildings[b_id][date]['max_users_unique'])
+		for hour in sorted(buildings[b_id][date]['hours'].keys()):
+			print '\t\t' + hour + ': ' + str(buildings[b_id][date]['hours'][hour]['count_users_unique'])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
