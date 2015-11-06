@@ -97,6 +97,16 @@ for b_id in buildings.keys():
 		median = users_unique[len(users_unique) / 2]
 		buildings[b_id]['dates'][date]['median_users_unique'] = median
 
+# Calculate Average for each day
+for b_id in buildings.keys():
+	for date in buildings[b_id]['dates'].keys():
+		average = 0
+		users_unique = []
+		for hour in buildings[b_id]['dates'][date]['hours'].keys():
+			users_unique.append(buildings[b_id]['dates'][date]['hours'][hour]['count_users_unique'])
+		average = sum(users_unique) / len(users_unique)
+		buildings[b_id]['dates'][date]['average_users_unique'] = average
+
 # Calculate Max for each building
 for b_id in buildings.keys():
 	max_users_unique = -1
@@ -122,8 +132,9 @@ for b_id in sorted(buildings.keys()):
 		print '\t\t' + 'max: ' + str(buildings[b_id]['dates'][date]['max_users_unique'])
 		print '\t\t' + 'min: ' + str(buildings[b_id]['dates'][date]['min_users_unique'])
 		print '\t\t' + 'median: ' + str(buildings[b_id]['dates'][date]['median_users_unique'])
+		print '\t\t' + 'average: ' + str(buildings[b_id]['dates'][date]['average_users_unique'])
 		for hour in sorted(buildings[b_id]['dates'][date]['hours'].keys()):
-			print '\t\t' + hour + ': ' + str(buildings[b_id]['dates'][date]['hours'][hour]['count_users_unique'])
+			print '\t\t\t' + hour + ': ' + str(buildings[b_id]['dates'][date]['hours'][hour]['count_users_unique'])
 		print '\t\t' + 'total: ' + str(buildings[b_id]['dates'][date]['total']['count_users_unique'])
 
 
