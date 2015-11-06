@@ -1,4 +1,5 @@
 import json
+from pprint import pprint
 
 filename = 'April2015_WifiData.json'
 
@@ -142,42 +143,42 @@ for b_id in buildings.keys():
 	average = sum(users_unique) / len(users_unique)
 	buildings[b_id]['average_users_unique'] = average
 
-# Print in order
+# Create a reformatted dictionary to export in json
+buildings_final = {}
 for b_id in sorted(buildings.keys()):
-	print '\'' + b_id + '\'' 
-	print 'max: ' + str(buildings[b_id]['max_users_unique'])
-	print 'min: ' + str(buildings[b_id]['min_users_unique'])
-	print 'median: ' + str(buildings[b_id]['median_users_unique'])
-	print 'average: ' + str(buildings[b_id]['average_users_unique'])
+	buildings_final[b_id] = {}
+	buildings_final[b_id]['max'] = buildings[b_id]['max_users_unique']
+	buildings_final[b_id]['min'] = buildings[b_id]['min_users_unique']
+	buildings_final[b_id]['median'] = buildings[b_id]['median_users_unique']
+	buildings_final[b_id]['average'] = buildings[b_id]['average_users_unique']
+	buildings_final[b_id]['dates'] = {}
 	for date in sorted(buildings[b_id]['dates'].keys()):
-		print '\t' + date
-		print '\t\t' + 'max: ' + str(buildings[b_id]['dates'][date]['max_users_unique'])
-		print '\t\t' + 'min: ' + str(buildings[b_id]['dates'][date]['min_users_unique'])
-		print '\t\t' + 'median: ' + str(buildings[b_id]['dates'][date]['median_users_unique'])
-		print '\t\t' + 'average: ' + str(buildings[b_id]['dates'][date]['average_users_unique'])
+		buildings_final[b_id]['dates'][date] = {}
+		buildings_final[b_id]['dates'][date]['max'] = buildings[b_id]['dates'][date]['max_users_unique']
+		buildings_final[b_id]['dates'][date]['min'] = buildings[b_id]['dates'][date]['min_users_unique']
+		buildings_final[b_id]['dates'][date]['median'] = buildings[b_id]['dates'][date]['median_users_unique']
+		buildings_final[b_id]['dates'][date]['average'] = buildings[b_id]['dates'][date]['average_users_unique']
+		buildings_final[b_id]['dates'][date]['total'] = buildings[b_id]['dates'][date]['total']['count_users_unique']
+		buildings_final[b_id]['dates'][date]['hours'] = {}
 		for hour in sorted(buildings[b_id]['dates'][date]['hours'].keys()):
-			print '\t\t\t' + hour + ': ' + str(buildings[b_id]['dates'][date]['hours'][hour]['count_users_unique'])
-		print '\t\t' + 'total: ' + str(buildings[b_id]['dates'][date]['total']['count_users_unique'])
+			buildings_final[b_id]['dates'][date]['hours'][hour] = buildings[b_id]['dates'][date]['hours'][hour]['count_users_unique']
 
+# pprint(buildings_final)
+print json.dumps(buildings_final)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# # Print in order
+# for b_id in sorted(buildings.keys()):
+# 	print '\'' + b_id + '\'' 
+# 	print 'max: ' + str(buildings[b_id]['max_users_unique'])
+# 	print 'min: ' + str(buildings[b_id]['min_users_unique'])
+# 	print 'median: ' + str(buildings[b_id]['median_users_unique'])
+# 	print 'average: ' + str(buildings[b_id]['average_users_unique'])
+# 	for date in sorted(buildings[b_id]['dates'].keys()):
+# 		print '\t' + date
+# 		print '\t\t' + 'max: ' + str(buildings[b_id]['dates'][date]['max_users_unique'])
+# 		print '\t\t' + 'min: ' + str(buildings[b_id]['dates'][date]['min_users_unique'])
+# 		print '\t\t' + 'median: ' + str(buildings[b_id]['dates'][date]['median_users_unique'])
+# 		print '\t\t' + 'average: ' + str(buildings[b_id]['dates'][date]['average_users_unique'])
+# 		for hour in sorted(buildings[b_id]['dates'][date]['hours'].keys()):
+# 			print '\t\t\t' + hour + ': ' + str(buildings[b_id]['dates'][date]['hours'][hour]['count_users_unique'])
+# 		print '\t\t' + 'total: ' + str(buildings[b_id]['dates'][date]['total']['count_users_unique'])
