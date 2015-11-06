@@ -1,5 +1,6 @@
 import json
 import sys
+import random
 from pprint import pprint
 
 filename = 'April2015_Statistics.json'
@@ -24,9 +25,23 @@ for b_id in buildings.keys():
 # # # # # # # # # # # # # # #
 
 # arbitrary building input w/ current day
+rand_building_id = 0
+while rand_building_id not in b.keys():
+	rand_building_id = str(random.randint(0, 250)).zfill(3)
+
+rand_hours_length = random.randint(1, 24)
+rand_hours = []
+for i in range(0, rand_hours_length):
+	rand_hours.append(random.randint(0, 1000))
+
+# building_input = {
+# 	'b_id' : '166',
+# 	'hours' : [300, 220, 140, 80, 50]
+# }
+
 building_input = {
-	'b_id' : '166',
-	'hours' : [300, 220, 140, 80, 50]
+	'b_id' : rand_building_id,
+	'hours' : rand_hours
 }
 
 b_id = building_input['b_id']
@@ -41,6 +56,7 @@ for date in sorted(b[b_id].keys()):
 		diff += abs(hours[hour] - b[b_id][date][hour])
 	print '\t\t' + str(diff)
 
+# Find least different day based off least different unique users at each hour
 # rod = rest of day
 least_diff, similar_date, rod, predicted_day = sys.maxint, 0, [], []
 for date in sorted(b[b_id].keys()):
