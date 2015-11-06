@@ -57,22 +57,39 @@ for b_id in buildings.keys():
 				del buildings[b_id][date][hour]
 		buildings[b_id][date]['hours'] = hours
 
+# Move all dates into 'dates' dict
+for b_id in buildings.keys():
+	dates = {}
+	for date in buildings[b_id].keys():
+		dates[date] = buildings[b_id][date]
+		del buildings[b_id][date]
+		buildings[b_id]['dates'] = dates
+
 # Calculate Max for each day
 for b_id in buildings.keys():
-	for date in buildings[b_id].keys():
+	for date in buildings[b_id]['dates'].keys():
 		max_users_unique = -1
-		for hour in buildings[b_id][date]['hours'].keys():
-			if buildings[b_id][date]['hours'][hour]['count_users_unique'] > max_users_unique:
-				max_users_unique = buildings[b_id][date]['hours'][hour]['count_users_unique']
-		buildings[b_id][date]['max_users_unique'] = max_users_unique
+		for hour in buildings[b_id]['dates'][date]['hours'].keys():
+			if buildings[b_id]['dates'][date]['hours'][hour]['count_users_unique'] > max_users_unique:
+				max_users_unique = buildings[b_id]['dates'][date]['hours'][hour]['count_users_unique']
+		buildings[b_id]['dates'][date]['max_users_unique'] = max_users_unique
+
+# Calculate Max for each building
+for b_id in buildings.keys():
+	max_users_unique = -1
+	for date in buildings[b_id]['dates'].keys():
+		if buildings[b_id]['dates'][date]['max_users_unique'] > max_users_unique:
+			max_users_unique = buildings[b_id]['dates'][date]['max_users_unique']
+	buildings[b_id]['max_users_unique'] = max_users_unique
 
 for b_id in sorted(buildings.keys()):
 	print '\'' + b_id + '\'' 
-	for date in sorted(buildings[b_id].keys()):
+	print 'max: ' + str(buildings[b_id]['max_users_unique'])
+	for date in sorted(buildings[b_id]['dates'].keys()):
 		print '\t' + date
-		print '\t\t' + 'max: ' + str(buildings[b_id][date]['max_users_unique'])
-		for hour in sorted(buildings[b_id][date]['hours'].keys()):
-			print '\t\t' + hour + ': ' + str(buildings[b_id][date]['hours'][hour]['count_users_unique'])
+		print '\t\t' + 'max: ' + str(buildings[b_id]['dates'][date]['max_users_unique'])
+		for hour in sorted(buildings[b_id]['dates'][date]['hours'].keys()):
+			print '\t\t' + hour + ': ' + str(buildings[b_id]['dates'][date]['hours'][hour]['count_users_unique'])
 
 
 
