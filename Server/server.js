@@ -185,6 +185,14 @@ app.get('/api/locationinfo/:str', function (request, response) {
 	});
 });
 
+// Historicl data {date: [crowd-level at hours-of-day]}
+app.get('/api/historical', function (request, response) {
+
+	var buildings = (JSON.parse(getHistoricalDataTextFile()));
+
+	response.send(buildings);
+});
+
 /* * * * * * * * * * 
  * HTTP Requests
  * * * * * * * * * */
@@ -345,6 +353,12 @@ function getBuildingRoomsTextFile() {
 
 function getAPIIndexPage() {
 	var filename = 'APIDocumentation.html';
+	var txt = readFromTextFile(filename);
+	return txt;
+}
+
+function getHistoricalDataTextFile() {
+	var filename = 'April2015_matcher.txt';
 	var txt = readFromTextFile(filename);
 	return txt;
 }
