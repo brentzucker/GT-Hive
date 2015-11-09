@@ -8,13 +8,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 
 import java.util.List;
 
 /**
  * Created by bvz on 11/2/15.
  */
-public class BuildingPagerActivity extends FragmentActivity {
+public class BuildingPagerActivity extends AppCompatActivity {
 
     private static final String EXTRA_BUILDING_ID = "hive.mas.com.gthive.building_id";
 

@@ -20,7 +20,8 @@
 
         <activity
             android:name=".BuildingPagerActivity"
-            android:label="BuildingIntent" >
+            android:label="Building Details"
+            android:parentActivityName=".BuildingListActivity">
         </activity>
 
     </application>
