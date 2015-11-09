@@ -193,6 +193,41 @@ app.get('/api/historical', function (request, response) {
 	response.send(buildings);
 });
 
+// b_id=XXX-[00, 01, 02, ..]
+app.get('/api/historical/:str', function (request, response) {
+	var buildings = (JSON.parse(getHistoricalDataTextFile())),
+		input = request.params.str.split("-"),
+		raw_b_id = input[0].split("="),
+		output = {};
+
+	if (input.length != 2 || raw_b_id.length != 2) {
+		// bad request
+		console.log('bad');
+		output.b_id = '000';
+		output.hours = [];
+	} else {
+
+		output.b_id = raw_b_id[1];
+
+		if (buildings[output.b_id] == undefined) {
+			// bad request
+			output.hours = [];
+		} else {
+			var input_hours = input[1].substring(1, input[1].length - 1).split(',');
+			
+			// Input strings to int
+			for (var i = 0; i < input_hours.length; i++) {
+				input_hours[i] = parseInt(input_hours[i]);
+			}
+
+			// get prediction rest of day percentage weighted (tested in matcher.py)
+			output.hours = getPredictionRestOfDayPercentageWeighted(buildings[output.b_id], output.b_id, input_hours, true);
+		}
+	}
+
+	response.send(output);
+});
+
 /* * * * * * * * * * 
  * HTTP Requests
  * * * * * * * * * */
@@ -451,3 +486,64 @@ function getBuildingObject(b_id) {
 	}
 	return building_obj;
 }
+
+// Find least different day based off least different unique users at each hour
+// Calculate difference as a percentage
+function getPredictionRestOfDayPercentageWeighted(building_dates, b_id, hours, test) {
+	var least_diff = Number.MAX_VALUE,
+		similar_date = 0,
+		rod = [],
+		predicted_day = [];
+
+	var dates = Object.keys(building_dates).sort();
+	for (var i = 0; i < dates.length; i++) {
+		if (test)
+			console.log(dates[i]);
+
+		var diff = 0;
+		for (var hour = 0; hour < hours.length; hour++) {
+			if (test)
+				console.log('\t' + building_dates[dates[i]][hour]);
+
+			var weight = hour + 1 // index
+			diff += weight * Math.abs(hours[hour] - building_dates[dates[i]][hour]) / hours[hour];
+		}
+
+		if (test)
+			console.log('\t\t' + diff);
+
+		if (diff < least_diff) {
+			least_diff = diff;
+			similar_date = dates[i];
+			rod = building_dates[dates[i]].slice(hours.length)
+		}
+	}
+
+	if (test)
+		console.log(similar_date + '\n' + least_diff);
+
+	return rod;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
