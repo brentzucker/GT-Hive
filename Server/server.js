@@ -186,7 +186,7 @@ app.get('/api/locationinfo/:str', function (request, response) {
 });
 
 // Historicl data {date: [crowd-level at hours-of-day]}
-app.get('/api/historical', function (request, response) {
+app.get('/api/predict', function (request, response) {
 
 	var buildings = (JSON.parse(getHistoricalDataTextFile()));
 
@@ -194,7 +194,7 @@ app.get('/api/historical', function (request, response) {
 });
 
 // b_id=XXX-[00, 01, 02, ..]
-app.get('/api/historical/:str', function (request, response) {
+app.get('/api/predict/:str', function (request, response) {
 	var buildings = (JSON.parse(getHistoricalDataTextFile())),
 		input = request.params.str.split("-"),
 		raw_b_id = input[0].split("="),
@@ -221,7 +221,10 @@ app.get('/api/historical/:str', function (request, response) {
 			}
 
 			// get prediction rest of day percentage weighted (tested in matcher.py)
-			output.hours = getPredictionRestOfDayPercentageWeighted(buildings[output.b_id], output.b_id, input_hours, true);
+			var prediction = getPredictionRestOfDayPercentageWeighted(buildings[output.b_id], output.b_id, input_hours, true);
+			output.hours = prediction.rod;
+			output.similar_date = prediction.similar_date;
+			output.variance = prediction.variance;
 		}
 	}
 
@@ -491,9 +494,11 @@ function getBuildingObject(b_id) {
 // Calculate difference as a percentage
 function getPredictionRestOfDayPercentageWeighted(building_dates, b_id, hours, test) {
 	var least_diff = Number.MAX_VALUE,
-		similar_date = 0,
-		rod = [],
-		predicted_day = [];
+		predicted_day = [],
+		prediction = {}
+		prediction.rod = [],
+		prediction.similar_date = 0,
+		prediction.variance = 0;
 
 	var dates = Object.keys(building_dates).sort();
 	for (var i = 0; i < dates.length; i++) {
@@ -514,15 +519,16 @@ function getPredictionRestOfDayPercentageWeighted(building_dates, b_id, hours, t
 
 		if (diff < least_diff) {
 			least_diff = diff;
-			similar_date = dates[i];
-			rod = building_dates[dates[i]].slice(hours.length)
+			prediction.similar_date = dates[i];
+			prediction.rod = building_dates[dates[i]].slice(hours.length)
+			prediction.variance = parseFloat(least_diff.toFixed(2));
 		}
 	}
 
 	if (test)
-		console.log(similar_date + '\n' + least_diff);
+		console.log(prediction.similar_date + '\n' + prediction.variance);
 
-	return rod;
+	return prediction;
 }
 
 
