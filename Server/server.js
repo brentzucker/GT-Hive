@@ -396,7 +396,7 @@ function getAPIIndexPage() {
 }
 
 function getHistoricalDataTextFile() {
-	var filename = 'April2015_matcher.txt';
+	var filename = 'JanFebMarApr2015_matcher.txt';
 	var txt = readFromTextFile(filename);
 	return txt;
 }

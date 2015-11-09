@@ -1,7 +1,7 @@
 import json
 import sys
 
-filename = 'April2015_Statistics.json'
+filename = 'JanFebMarApr2015_Statistics.json'
 
 f = open(filename)
 
@@ -18,6 +18,7 @@ for b_id in buildings.keys():
 		for hour in sorted(buildings[b_id]['dates'][date]['hours'].keys()):
 			b[b_id][date].append(buildings[b_id]['dates'][date]['hours'][hour])
 
+print json.dumps(b)
 # # # # # # # # # # # # # # #
 # Match a building and times
 # # # # # # # # # # # # # # #
@@ -151,7 +152,7 @@ building_input = {
 
 b_id = building_input['b_id']
 hours = building_input['hours']
-print getPredictionRestOfDay(b_id, hours, test=False)
-print getPredictionRestOfDayWeighted(b_id, hours, test=False)
-print getPredictionRestOfDayPercentage(b_id, hours, test=False)
-print getPredictionRestOfDayPercentageWeighted(b_id, hours, test=False)
+# print getPredictionRestOfDay(b_id, hours, test=False)
+# print getPredictionRestOfDayWeighted(b_id, hours, test=False)
+# print getPredictionRestOfDayPercentage(b_id, hours, test=False)
+# print getPredictionRestOfDayPercentageWeighted(b_id, hours, test=False)
