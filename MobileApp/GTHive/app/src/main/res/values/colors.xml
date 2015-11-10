@@ -7,4 +7,6 @@
     <color name="DarkBlue">#000080</color>
     <color name="MintCream">#F5FFFA</color>
     <color name="MarshMallow">#edebe7</color>
+    <color name="Red">#FF0000</color>
+    <color name="Green">#00AF00</color>
 </resources>
