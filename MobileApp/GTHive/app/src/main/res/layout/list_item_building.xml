@@ -22,7 +22,7 @@
             tools:text="Building Name"/>
 
         <TextView
-            android:id="@+id/list_item_building_id_text_view"
+            android:id="@+id/list_item_building_occupancy_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/list_item_building_name_text_view"

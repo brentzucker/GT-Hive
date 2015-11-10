@@ -69,20 +69,20 @@ public class BuildingListFragment extends Fragment {
         private Building mBuilding;
 
         private TextView mNameTextView;
-        private TextView mIdTextView;
+        private TextView mOccupancyTextView;
 
         public BuildingHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
 
             mNameTextView = (TextView) itemView.findViewById(R.id.list_item_building_name_text_view);
-            mIdTextView = (TextView) itemView.findViewById(R.id.list_item_building_id_text_view);
+            mOccupancyTextView = (TextView) itemView.findViewById(R.id.list_item_building_occupancy_text_view);
         }
 
         public void bindBuilding(Building building) {
             mBuilding = building;
             mNameTextView.setText(mBuilding.getName());
-            mIdTextView.setText(mBuilding.getId());
+            mOccupancyTextView.setText("" + mBuilding.getOccupancy());
         }
 
             @Override

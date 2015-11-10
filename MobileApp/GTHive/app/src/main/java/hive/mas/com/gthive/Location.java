@@ -13,12 +13,14 @@ public class Location {
     public Location(String id) {
         mId = id;
         loadBId();
+        mOccupancy = 0;
     }
 
     public Location(String id, String name) {
         mId = id;
         loadBId();
         mName = name;
+        mOccupancy = 0;
     }
 
     private void loadBId() {

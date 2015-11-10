@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -16,10 +17,7 @@ public class BuildingFragment extends android.support.v4.app.Fragment {
     private Building mBuilding;
     private TextView mNameTextView;
     private TextView mOccupancyTextView;
-
-    // Temporary text views to just print building structure
-    private TextView mFloorsTextView;
-    private TextView mRoomsTextView;
+    private LinearLayout mFragmentBuildingLayout;
 
     public static BuildingFragment newInstance(String buildingId) {
         Bundle args = new Bundle();
@@ -41,17 +39,29 @@ public class BuildingFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_building, container, false);
 
+        getActivity().setTitle(mBuilding.getName());
+
         mNameTextView = (TextView) v.findViewById(R.id.building_name);
         mNameTextView.setText(mBuilding.getName());
 
         mOccupancyTextView = (TextView) v.findViewById(R.id.occupancy);
         mOccupancyTextView.setText("" + mBuilding.getOccupancy());
 
-        mFloorsTextView = (TextView) v.findViewById(R.id.floors);
-        mFloorsTextView.setText(mBuilding.getFloorNumbers());
+        mFragmentBuildingLayout = (LinearLayout) v.findViewById(R.id.floors_linear_layout);
+        for (Floor f : mBuilding.getFloors()) {
 
-        mRoomsTextView = (TextView) v.findViewById(R.id.rooms);
-        mRoomsTextView.setText(mBuilding.getRoomNumbers());
+            TextView floorNumberTextView = new TextView(getActivity());
+            floorNumberTextView.setText("Floor " + f.getFloorNumber() + ": ");
+
+            TextView floorOccupancyTextView = new TextView(getActivity());
+            floorOccupancyTextView.setText("" + f.getOccupancy());
+
+            LinearLayout floorRowLinearLayout = new LinearLayout(getActivity());
+            floorRowLinearLayout.addView(floorNumberTextView);
+            floorRowLinearLayout.addView(floorOccupancyTextView);
+
+            mFragmentBuildingLayout.addView(floorRowLinearLayout);
+        }
 
         return v;
     }
