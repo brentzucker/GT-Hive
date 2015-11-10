@@ -17,7 +17,7 @@ public class BuildingFragment extends android.support.v4.app.Fragment {
     private Building mBuilding;
     private TextView mNameTextView;
     private TextView mOccupancyTextView;
-    private LinearLayout mFragmentBuildingLayout;
+    private LinearLayout mFloorsLinearLayout;
 
     public static BuildingFragment newInstance(String buildingId) {
         Bundle args = new Bundle();
@@ -47,20 +47,18 @@ public class BuildingFragment extends android.support.v4.app.Fragment {
         mOccupancyTextView = (TextView) v.findViewById(R.id.occupancy);
         mOccupancyTextView.setText("" + mBuilding.getOccupancy());
 
-        mFragmentBuildingLayout = (LinearLayout) v.findViewById(R.id.floors_linear_layout);
+        mFloorsLinearLayout = (LinearLayout) v.findViewById(R.id.floors_linear_layout);
         for (Floor f : mBuilding.getFloors()) {
 
-            TextView floorNumberTextView = new TextView(getActivity());
-            floorNumberTextView.setText("Floor " + f.getFloorNumber() + ": ");
+            View listItemFloor = inflater.inflate(R.layout.list_item_floor, null, false);
 
-            TextView floorOccupancyTextView = new TextView(getActivity());
+            TextView floorNumberTextView = (TextView) listItemFloor.findViewById(R.id.floor_number_text_view);
+            floorNumberTextView.setText("Floor " + f.getFloorNumber());
+
+            TextView floorOccupancyTextView = (TextView) listItemFloor.findViewById(R.id.floor_occupancy_text_view);
             floorOccupancyTextView.setText("" + f.getOccupancy());
 
-            LinearLayout floorRowLinearLayout = new LinearLayout(getActivity());
-            floorRowLinearLayout.addView(floorNumberTextView);
-            floorRowLinearLayout.addView(floorOccupancyTextView);
-
-            mFragmentBuildingLayout.addView(floorRowLinearLayout);
+            mFloorsLinearLayout.addView(listItemFloor);
         }
 
         return v;
