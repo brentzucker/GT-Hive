@@ -17,6 +17,9 @@ public class BuildingFragment extends android.support.v4.app.Fragment {
     private Building mBuilding;
     private TextView mNameTextView;
     private TextView mOccupancyTextView;
+    private TextView mFirstBestTimeTextView;
+    private TextView mSecondBestTimeTextView;
+    private TextView mThirdBestTimeTextView;
     private LinearLayout mFloorsLinearLayout;
 
     public static BuildingFragment newInstance(String buildingId) {
@@ -46,6 +49,16 @@ public class BuildingFragment extends android.support.v4.app.Fragment {
 
         mOccupancyTextView = (TextView) v.findViewById(R.id.occupancy);
         mOccupancyTextView.setText("" + mBuilding.getOccupancy());
+
+        // Temporarily use fake numbers for best times
+        mFirstBestTimeTextView = (TextView) v.findViewById(R.id.first_best_time_text_view);
+        mFirstBestTimeTextView.setText("8am");
+
+        mSecondBestTimeTextView = (TextView) v.findViewById(R.id.second_best_time_text_view);
+        mSecondBestTimeTextView.setText("1pm");
+
+        mThirdBestTimeTextView = (TextView) v.findViewById(R.id.third_best_time_text_view);
+        mThirdBestTimeTextView.setText("7pm");
 
         mFloorsLinearLayout = (LinearLayout) v.findViewById(R.id.floors_linear_layout);
         for (Floor f : mBuilding.getFloors()) {
