@@ -11,7 +11,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/OldGold">
 
         <TextView
             android:id="@+id/list_item_building_name_text_view"
