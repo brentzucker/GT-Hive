@@ -1,11 +1,20 @@
 package hive.mas.com.gthive;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bvz on 11/2/15.
@@ -17,7 +26,10 @@ public class BuildingFragment extends android.support.v4.app.Fragment {
     private Building mBuilding;
     private TextView mNameTextView;
     private TextView mOccupancyTextView;
-    private LinearLayout mFragmentBuildingLayout;
+    private TextView mFirstBestTimeTextView;
+    private TextView mSecondBestTimeTextView;
+    private TextView mThirdBestTimeTextView;
+    private LinearLayout mFloorsLinearLayout;
 
     public static BuildingFragment newInstance(String buildingId) {
         Bundle args = new Bundle();
@@ -47,22 +59,106 @@ public class BuildingFragment extends android.support.v4.app.Fragment {
         mOccupancyTextView = (TextView) v.findViewById(R.id.occupancy);
         mOccupancyTextView.setText("" + mBuilding.getOccupancy());
 
-        mFragmentBuildingLayout = (LinearLayout) v.findViewById(R.id.floors_linear_layout);
+
+        /* Draw Line Graph */
+
+        // int average = mBuilding.getCapacityAverage();
+        int averageCrowdValues = (int)(100 * (Math.random() * 10));
+        // List<Integer> todaysCrowdValues = mBuilding.getTodaysCrowdValues();
+        // List<Integer> rodCrowdValues = mBuilding.getRodCrowdValues();
+        // temporarily using random numbers
+        List<Integer> todaysCrowdValues = new ArrayList<>();
+        List<Integer> rodCrowdValues = new ArrayList<>();
+        for (int i = 0; i < 12; i++) todaysCrowdValues.add( (int)(100 * (Math.random() * 10)));
+        for (int i = 0; i < 12; i++) rodCrowdValues.add( (int)(100 * (Math.random() * 10)));
+
+        drawLineChart(v, averageCrowdValues, todaysCrowdValues, rodCrowdValues);
+
+        // Temporarily use fake numbers for best times
+        mFirstBestTimeTextView = (TextView) v.findViewById(R.id.first_best_time_text_view);
+        mFirstBestTimeTextView.setText("8am");
+
+        mSecondBestTimeTextView = (TextView) v.findViewById(R.id.second_best_time_text_view);
+        mSecondBestTimeTextView.setText("1pm");
+
+        mThirdBestTimeTextView = (TextView) v.findViewById(R.id.third_best_time_text_view);
+        mThirdBestTimeTextView.setText("7pm");
+
+        mFloorsLinearLayout = (LinearLayout) v.findViewById(R.id.floors_linear_layout);
         for (Floor f : mBuilding.getFloors()) {
 
-            TextView floorNumberTextView = new TextView(getActivity());
-            floorNumberTextView.setText("Floor " + f.getFloorNumber() + ": ");
+            View listItemFloor = inflater.inflate(R.layout.list_item_floor, null, false);
 
-            TextView floorOccupancyTextView = new TextView(getActivity());
+            TextView floorNumberTextView = (TextView) listItemFloor.findViewById(R.id.floor_number_text_view);
+            floorNumberTextView.setText("Floor " + f.getFloorNumber());
+
+            TextView floorOccupancyTextView = (TextView) listItemFloor.findViewById(R.id.floor_occupancy_text_view);
             floorOccupancyTextView.setText("" + f.getOccupancy());
 
-            LinearLayout floorRowLinearLayout = new LinearLayout(getActivity());
-            floorRowLinearLayout.addView(floorNumberTextView);
-            floorRowLinearLayout.addView(floorOccupancyTextView);
-
-            mFragmentBuildingLayout.addView(floorRowLinearLayout);
+            mFloorsLinearLayout.addView(listItemFloor);
         }
 
         return v;
+    }
+
+    public void drawLineChart(View v, int averageCrowdValue, List<Integer> todaysCrowdValues, List<Integer> rodCrowdValues) {
+
+        /* Create data entries1 and labels for todaysCrowd Values*/
+        ArrayList<Entry> entries1 = new ArrayList<>();
+        ArrayList<String> labels = new ArrayList<>();
+        for (int hour = 0; hour < todaysCrowdValues.size(); hour++) {
+            entries1.add(new Entry(todaysCrowdValues.get(hour), hour));
+            labels.add("" + hour);
+        }
+
+        /* Create data entries2 and labels for rodCrowdValues Values*/
+        ArrayList<Entry> entries2 = new ArrayList<>();
+        for (int hour = 0; hour < rodCrowdValues.size(); hour++) {
+            entries2.add(new Entry(rodCrowdValues.get(hour), hour + todaysCrowdValues.size()));
+            labels.add("" + (hour  + todaysCrowdValues.size()));
+        }
+
+        /* Create dataentires for averageCrowdValue */
+        ArrayList<Entry> entries3 = new ArrayList<>();
+        entries3.add(new Entry(averageCrowdValue, 0)); entries3.add(new Entry(averageCrowdValue, 23));
+
+        // Create dataset from data entries1
+        LineDataSet dataset1 = new LineDataSet(entries1, "Today's Crowd");
+        LineDataSet dataset2 = new LineDataSet(entries2, "Predicted Crowd");
+        LineDataSet dataset3 = new LineDataSet(entries3, "Average Crowd");
+
+        // Set the color for this dataset
+        dataset1.setColor(Color.rgb(0, 37, 76)); // GT Navy
+        dataset2.setColor(Color.rgb(238, 178, 17)); // Buzz Gold
+        dataset3.setColor(Color.rgb(197, 147, 83)); // GT Gold
+
+        // Aggregate all data sets
+        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+        dataSets.add(dataset1);
+        dataSets.add(dataset2);
+        dataSets.add(dataset3);
+
+        /* Create the chart */
+        LineChart chart = (LineChart) v.findViewById(R.id.chart);
+
+        // Hide Labels and grid lines from x axis
+        chart.getXAxis().setDrawGridLines(false);
+        chart.getXAxis().setDrawLabels(false);
+
+        // Hide labels and grid lines from y axis
+        chart.getAxisLeft().setDrawGridLines(false);
+        chart.getAxisLeft().setDrawLabels(false);
+        chart.getAxisRight().setDrawGridLines(false);
+        chart.getAxisRight().setDrawLabels(false);
+
+        // Dont label each node on graph
+        chart.setDrawMarkerViews(false);
+        LineData data = new LineData(labels, dataSets);
+        chart.setData(data);
+
+        chart.setDescription("Today's Crowd");
+
+        // animations
+        chart.animateY(1000);
     }
 }
