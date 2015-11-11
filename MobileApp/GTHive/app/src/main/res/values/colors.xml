@@ -3,8 +3,9 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="FadedWhite">#80FFFFFF</color>
-    <color name="OldGold">#cfbf3b</color>
-    <color name="DarkBlue">#000080</color>
+    <color name="OldGold">#C59353</color>
+    <color name="NavyBlue">#00254C</color>
+    <color name="BlueTint">#323299</color>
     <color name="MintCream">#F5FFFA</color>
     <color name="MarshMallow">#edebe7</color>
     <color name="Red">#FF0000</color>
