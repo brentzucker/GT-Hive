@@ -94,7 +94,8 @@ public class BuildingListFragment extends Fragment {
                 //mOccupancyTextView.setTextColor(Color.rgb(0, 175, 0));
                 mStatusView.setImageResource(R.drawable.ic_thumbs_up);
             } else {
-                mOccupancyTextView.setTextColor(Color.rgb(175, 0, 0));
+                //mOccupancyTextView.setTextColor(Color.rgb(175, 0, 0));
+                mOccupancyTextView.setText("                                              " + mOccupancyTextView.getText());
                 mStatusView.setImageResource(R.drawable.ic_thumbs_down);
             }
         }
