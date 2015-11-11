@@ -90,12 +90,8 @@ public class BuildingListFragment extends Fragment {
             CharSequence text = mOccupancyTextView.getText();
             int number = Integer.parseInt(text.toString());
             if (number <= 10) { //instead of 10 need to use capacity of building
-                mOccupancyTextView.setText("                                              " + mOccupancyTextView.getText());
-                //mOccupancyTextView.setTextColor(Color.rgb(0, 175, 0));
                 mStatusView.setImageResource(R.drawable.ic_thumbs_up);
             } else {
-                //mOccupancyTextView.setTextColor(Color.rgb(175, 0, 0));
-                mOccupancyTextView.setText("                                              " + mOccupancyTextView.getText());
                 mStatusView.setImageResource(R.drawable.ic_thumbs_down);
             }
         }
