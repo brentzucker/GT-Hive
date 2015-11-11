@@ -1,6 +1,7 @@
 package hive.mas.com.gthive;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -83,6 +84,13 @@ public class BuildingListFragment extends Fragment {
             mBuilding = building;
             mNameTextView.setText(mBuilding.getName());
             mOccupancyTextView.setText("" + mBuilding.getOccupancy());
+            CharSequence text = mOccupancyTextView.getText();
+            int number = Integer.parseInt(text.toString());
+            if (number <= 10) { //instead of 10 need to use capacity of building
+                mOccupancyTextView.setTextColor(Color.rgb(0, 175, 0));
+            } else {
+                mOccupancyTextView.setTextColor(Color.rgb(175, 0, 0));
+            }
         }
 
             @Override
