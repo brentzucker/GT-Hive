@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -71,6 +72,7 @@ public class BuildingListFragment extends Fragment {
 
         private TextView mNameTextView;
         private TextView mOccupancyTextView;
+        private ImageView mStatusView;
 
         public BuildingHolder(View itemView) {
             super(itemView);
@@ -78,6 +80,7 @@ public class BuildingListFragment extends Fragment {
 
             mNameTextView = (TextView) itemView.findViewById(R.id.list_item_building_name_text_view);
             mOccupancyTextView = (TextView) itemView.findViewById(R.id.list_item_building_occupancy_text_view);
+            mStatusView = (ImageView) itemView.findViewById(R.id.list_item_occupancy_status);
         }
 
         public void bindBuilding(Building building) {
@@ -88,8 +91,10 @@ public class BuildingListFragment extends Fragment {
             int number = Integer.parseInt(text.toString());
             if (number <= 10) { //instead of 10 need to use capacity of building
                 mOccupancyTextView.setTextColor(Color.rgb(0, 175, 0));
+                mStatusView.setImageResource(R.drawable.ic_thumbs_up);
             } else {
                 mOccupancyTextView.setTextColor(Color.rgb(175, 0, 0));
+                mStatusView.setImageResource(R.drawable.ic_thumbs_down);
             }
         }
 

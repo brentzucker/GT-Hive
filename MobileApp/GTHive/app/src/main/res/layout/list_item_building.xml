@@ -32,6 +32,11 @@
                 tools:text="Building Id"/>
         </RelativeLayout>
 
+        <ImageView android:id="@+id/list_item_occupancy_status"
+              android:layout_width="50dp"
+              android:layout_height="50dp"
+              android:src="@drawable/ic_thumbs_up"/>
+
         <ImageButton
             android:id="@+id/favorite_button"
             android:layout_width="60dp"
