@@ -1,7 +1,7 @@
 import json
 from pprint import pprint
 
-filename = 'April2015_WifiData.json'
+filename = '../data/2014.json'
 
 f = open(filename)
 
