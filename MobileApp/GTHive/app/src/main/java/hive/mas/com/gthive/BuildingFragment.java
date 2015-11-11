@@ -123,27 +123,40 @@ public class BuildingFragment extends android.support.v4.app.Fragment {
         entries3.add(new Entry(averageCrowdValue, 0)); entries3.add(new Entry(averageCrowdValue, 23));
 
         // Create dataset from data entries1
-        LineDataSet dataset1 = new LineDataSet(entries1, "Todays Crowd Values");
-        LineDataSet dataset2 = new LineDataSet(entries2, "Predicted Crowd Values");
-        LineDataSet dataset3 = new LineDataSet(entries3, "Average Crowd Values");
+        LineDataSet dataset1 = new LineDataSet(entries1, "Today's Crowd");
+        LineDataSet dataset2 = new LineDataSet(entries2, "Predicted Crowd");
+        LineDataSet dataset3 = new LineDataSet(entries3, "Average Crowd");
 
         // Set the color for this dataset
         dataset1.setColor(Color.rgb(0, 37, 76)); // GT Navy
         dataset2.setColor(Color.rgb(238, 178, 17)); // Buzz Gold
         dataset3.setColor(Color.rgb(197, 147, 83)); // GT Gold
 
-        /* Create the chart */
-        LineChart chart = (LineChart) v.findViewById(R.id.chart);
-
+        // Aggregate all data sets
         ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
         dataSets.add(dataset1);
         dataSets.add(dataset2);
         dataSets.add(dataset3);
 
+        /* Create the chart */
+        LineChart chart = (LineChart) v.findViewById(R.id.chart);
+
+        // Hide Labels and grid lines from x axis
+        chart.getXAxis().setDrawGridLines(false);
+        chart.getXAxis().setDrawLabels(false);
+
+        // Hide labels and grid lines from y axis
+        chart.getAxisLeft().setDrawGridLines(false);
+        chart.getAxisLeft().setDrawLabels(false);
+        chart.getAxisRight().setDrawGridLines(false);
+        chart.getAxisRight().setDrawLabels(false);
+
+        // Dont label each node on graph
+        chart.setDrawMarkerViews(false);
         LineData data = new LineData(labels, dataSets);
         chart.setData(data);
 
-        chart.setDescription("Today's Crowd Level");
+        chart.setDescription("Today's Crowd");
 
         // animations
         chart.animateY(1000);
