@@ -3,7 +3,7 @@ import math
 from datetime import datetime
 from pprint import pprint
 
-filename = '../data/2014.json'
+filename = '../data/2014-15.json'
 
 f = open(filename)
 

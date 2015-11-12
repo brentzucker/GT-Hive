@@ -1,6 +1,6 @@
 import json
 
-filename = '2015.json'
+filename = '2014-15.json'
 
 f = open(filename)
 
