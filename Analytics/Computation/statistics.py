@@ -1,4 +1,6 @@
 import json
+import math
+from datetime import datetime
 from pprint import pprint
 
 filename = '../data/2014.json'
@@ -169,13 +171,25 @@ for b_id in buildings.keys():
 			max_users_unique = buildings[b_id]['dates'][date]['max_users_unique']
 	buildings[b_id]['max_users_unique'] = max_users_unique
 
+# start = datetime(2012, 1, 1)
+# end = datetime(2012, 10, 6)
+# delta = timedelta(days=1)
+# d = start
+# diff = 0
+# weekend = set([5, 6])
+# while d <= end:
+#     if d.weekday() not in weekend:
+#         diff += 1
+#     d += delta
+
 # Calculate percentiles for each building (daytime)
 for b_id in buildings.keys():
 	users_unique = []
 	for date in buildings[b_id]['dates'].keys():
-		for hour in range(7,20):
-			hour = str(hour).zfill(2)
-			users_unique.append(buildings[b_id]['dates'][date]['hours'][hour]['count_users_unique'])
+		if datetime(int(date[-4:]), int(date[0:2]), int(date[3:5])).weekday() < 5:
+			for hour in range(7,20):
+				hour = str(hour).zfill(2)
+				users_unique.append(buildings[b_id]['dates'][date]['hours'][hour]['count_users_unique'])
 	users_unique.sort()
 	buildings[b_id]['p_99'] = users_unique[int(len(users_unique) * .99)]
 	buildings[b_id]['p_95'] = users_unique[int(len(users_unique) * .95)]
@@ -185,6 +199,18 @@ for b_id in buildings.keys():
 	buildings[b_id]['p_5'] = users_unique[int(len(users_unique) * .05)]
 	buildings[b_id]['p_1'] = users_unique[int(len(users_unique) * .01)]
 	buildings[b_id]['iqr'] = buildings[b_id]['p_75'] - buildings[b_id]['p_25']
+	buildings[b_id]['avg_weekday_daytime'] = sum(users_unique) / len(users_unique)
+
+
+# Calculate std deviation for weekday's (daytime)
+for b_id in buildings.keys():
+	users_unique = []
+	for date in buildings[b_id]['dates'].keys():
+		if datetime(int(date[-4:]), int(date[0:2]), int(date[3:5])).weekday() < 5:
+			for hour in range(7,20):
+				hour = str(hour).zfill(2)
+				users_unique.append((buildings[b_id]['dates'][date]['hours'][hour]['count_users_unique'] - buildings[b_id]['avg_weekday_daytime']) ** 2)
+	buildings[b_id]['std_dev'] = int(math.sqrt(sum(users_unique) / len(users_unique)))
 
 # Calculate Min for each building
 for b_id in buildings.keys():
@@ -306,6 +332,8 @@ if True:
 		print 'p_5: ' + str(buildings[b_id]['p_5'])
 		print 'p_1: ' + str(buildings[b_id]['p_1'])
 		print 'min: ' + str(buildings[b_id]['min_users_unique'])
+		print 'avg weekday daytime: ' + str(buildings[b_id]['avg_weekday_daytime'])
+		print 'weekday daytime std_dev: ' + str(buildings[b_id]['std_dev'])
 		print 'iqr: ' + str(buildings[b_id]['iqr'])
 		print 'min_day: ' + str(buildings[b_id]['min_day'])
 		print 'median: ' + str(buildings[b_id]['median_users_unique'])
