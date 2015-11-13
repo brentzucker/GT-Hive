@@ -1,7 +1,7 @@
 package hive.mas.com.gthive;
 
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +29,10 @@ public class BuildingListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        // Load Buildings Occupancies from API
+        setRetainInstance(true);
+        new FetchBuildingsTask(Campus.get(getActivity())).execute();
     }
 
     @Override
@@ -128,6 +132,25 @@ public class BuildingListFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mBuildings.size();
+        }
+    }
+
+    private class FetchBuildingsTask extends AsyncTask<Void, Void, Campus> {
+
+        Campus campus;
+
+        protected FetchBuildingsTask(Campus campus) {
+            this.campus = campus;
+        }
+
+        @Override
+        protected Campus doInBackground(Void... params) {
+            return new APIFetcher().fetchBuildingOccupancies(this.campus);
+        }
+
+        @Override
+        protected void onPostExecute(Campus campus) {
+            updateUI();
         }
     }
 }
