@@ -45,6 +45,11 @@ app.get('/api/buildings', function (request, response) {
 	response.send(json);
 });
 
+app.get('/api/floors', function (request, response) {
+	var json = getBuildingFloorsTextFile();
+	response.send(json);
+});
+
 // Array of all Rooms (b_id, name)
 app.get('/api/rooms', function (request, response) {
 	var json = getBuildingRoomsTextFile();
@@ -378,13 +383,19 @@ function readFromTextFile(filename) {
 }
 
 function getBuildingsTextFile() {
-	var filename = 'building_ids_names.txt';
+	var filename = 'buildings.txt';
+	var txt = readFromTextFile(filename);
+	return txt;
+}
+
+function getBuildingFloorsTextFile() {
+	var filename = 'floors.txt';
 	var txt = readFromTextFile(filename);
 	return txt;
 }
 
 function getBuildingRoomsTextFile() {
-	var filename = 'buildings_rooms.txt';
+	var filename = 'rooms.txt';
 	var txt = readFromTextFile(filename);
 	return txt;
 }
