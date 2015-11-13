@@ -117,7 +117,6 @@ app.get('/api/locationinfo/floors', function (request, response) {
 						var ap = b_id + '-' + room;
 
 						if (ap in rooms) {
-							console.log(rooms[ap]);
 							total_occupancy += rooms[ap]['occupancy'];
 						}
 					}
