@@ -85,4 +85,45 @@ public class APIFetcher {
             }
         }
     }
+
+    public Campus fetchFloorOccupancies(Campus campus) {
+
+        String domain = "http://104.236.76.46:8080";
+        String uri = "/api/locationinfo/floors";
+        String url = domain + uri;
+
+        try {
+            String jsonString = getUrlString(url);
+            Log.i(TAG, "Received JSON: " + jsonString);
+            JSONObject jsonBody = new JSONObject(jsonString);
+            parseFloorOccupancies(campus, jsonBody);
+        } catch (JSONException je) {
+            Log.e(TAG, "Failed to parse JSON", je);
+        } catch (IOException ioe) {
+            Log.e(TAG, "Failed to fetch items", ioe);
+        }
+
+        return campus;
+    }
+
+    private void parseFloorOccupancies(Campus campus, JSONObject jsonBody) throws IOException, JSONException {
+        JSONObject occupanciesJsonObject = jsonBody.optJSONObject("occupancies");
+        Iterator<?> aps = occupanciesJsonObject.keys();
+
+        while (aps.hasNext()) {
+            String ap = (String) aps.next();
+
+            int occupancy = occupanciesJsonObject.getInt(ap);
+
+            String b_id = ap.split("_")[0];
+            char floor = (ap.split("_")[1]).charAt(0);
+
+            // Update the occupancy of the building
+            if (campus.getBuilding(b_id) != null && campus.getBuilding(b_id).getFloor(floor) != null) {
+                campus.getBuilding(b_id).getFloor(floor).setOccupancy(occupancy);
+            }
+
+            Log.i(TAG, ap + ": " + occupancy);
+        }
+    }
 }

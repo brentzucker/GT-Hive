@@ -32,7 +32,10 @@ public class BuildingListFragment extends Fragment {
 
         // Load Buildings Occupancies from API
         setRetainInstance(true);
-        new FetchBuildingsTask(Campus.get(getActivity())).execute();
+        new FetchBuildingsTask("BuildingOccupancies", Campus.get(getActivity())).execute();
+
+        // Load Floor Occupancies from API
+        new FetchBuildingsTask("FloorOccupancies", Campus.get(getActivity())).execute();
     }
 
     @Override
@@ -138,14 +141,21 @@ public class BuildingListFragment extends Fragment {
     private class FetchBuildingsTask extends AsyncTask<Void, Void, Campus> {
 
         Campus campus;
+        String taskType;
 
-        protected FetchBuildingsTask(Campus campus) {
+        protected FetchBuildingsTask(String taskType, Campus campus) {
             this.campus = campus;
+            this.taskType = taskType;
         }
 
         @Override
         protected Campus doInBackground(Void... params) {
-            return new APIFetcher().fetchBuildingOccupancies(this.campus);
+            if (taskType.equals("BuildingOccupancies")) {
+                return new APIFetcher().fetchBuildingOccupancies(this.campus);
+            } else if (taskType.equals("FloorOccupancies")) {
+                return new APIFetcher().fetchFloorOccupancies(this.campus);
+            } else
+                return campus;
         }
 
         @Override
