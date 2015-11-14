@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -85,8 +84,6 @@ public class BuildingListFragment extends Fragment {
         private TextView mNameTextView;
         private TextView mOccupancyTextView;
         private TextView mPercentageOccupiedTextView;
-        private Drawable mPercentageOccupiedBoxDrawable;
-        private ImageView mStatusView;
 
         public BuildingHolder(View itemView) {
             super(itemView);
@@ -95,8 +92,6 @@ public class BuildingListFragment extends Fragment {
             mNameTextView = (TextView) itemView.findViewById(R.id.list_item_building_name_text_view);
             mOccupancyTextView = (TextView) itemView.findViewById(R.id.list_item_building_occupancy_text_view);
             mPercentageOccupiedTextView = (TextView) itemView.findViewById(R.id.percentage_occupied_text_view);
-            mStatusView = (ImageView) itemView.findViewById(R.id.list_item_occupancy_status);
-//            mPercentageOccupiedBoxDrawable = (Drawable) itemView.findViewById(R.drawable.percentage_occupied_box_drawable);
         }
 
         public void bindBuilding(Building building) {
@@ -105,15 +100,6 @@ public class BuildingListFragment extends Fragment {
             mOccupancyTextView.setText("" + mBuilding.getOccupancy());
 
             setPercentageOccupiedTextView(((int) (Math.random() * 100)));
-
-            CharSequence text = mOccupancyTextView.getText();
-            int number = Integer.parseInt(text.toString());
-            if (number <= 10) { //instead of 10 need to use capacity of building
-                mStatusView.setImageResource(R.drawable.ic_thumbs_up);
-//                mStatusView.setImageDrawable(getResources().getDrawable(R.drawable.percentage_occupied_box_drawable));
-            } else {
-                mStatusView.setImageResource(R.drawable.ic_thumbs_down);
-            }
         }
 
         @Override
