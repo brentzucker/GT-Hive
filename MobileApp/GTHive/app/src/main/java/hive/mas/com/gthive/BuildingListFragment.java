@@ -79,6 +79,7 @@ public class BuildingListFragment extends Fragment {
 
         private TextView mNameTextView;
         private TextView mOccupancyTextView;
+        private TextView mPercentageOccupiedTextView;
         private ImageView mStatusView;
 
         public BuildingHolder(View itemView) {
@@ -87,6 +88,7 @@ public class BuildingListFragment extends Fragment {
 
             mNameTextView = (TextView) itemView.findViewById(R.id.list_item_building_name_text_view);
             mOccupancyTextView = (TextView) itemView.findViewById(R.id.list_item_building_occupancy_text_view);
+            mPercentageOccupiedTextView = (TextView) itemView.findViewById(R.id.percentage_occupied_text_view);
             mStatusView = (ImageView) itemView.findViewById(R.id.list_item_occupancy_status);
         }
 
@@ -94,10 +96,14 @@ public class BuildingListFragment extends Fragment {
             mBuilding = building;
             mNameTextView.setText(mBuilding.getName());
             mOccupancyTextView.setText("" + mBuilding.getOccupancy());
+
+            mPercentageOccupiedTextView.setText("" + ((int)(Math.random() * 100)));
+
             CharSequence text = mOccupancyTextView.getText();
             int number = Integer.parseInt(text.toString());
             if (number <= 10) { //instead of 10 need to use capacity of building
                 mStatusView.setImageResource(R.drawable.ic_thumbs_up);
+//                mStatusView.setImageDrawable(getResources().getDrawable(R.drawable.percentage_occupied_box_drawable));
             } else {
                 mStatusView.setImageResource(R.drawable.ic_thumbs_down);
             }

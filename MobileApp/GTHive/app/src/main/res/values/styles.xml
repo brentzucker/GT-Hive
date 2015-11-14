@@ -28,4 +28,12 @@
         <item name="android:layout_weight">1</item>
         <item name="android:layout_gravity">center</item>
     </style>
+
+    <style name="PercentageOccupiedBox">
+        <item name="android:background">@drawable/percentage_occupied_box_drawable</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:gravity">center</item>
+    </style>
 </resources>
