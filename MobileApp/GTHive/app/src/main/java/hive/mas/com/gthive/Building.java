@@ -51,6 +51,15 @@ public class Building extends Location {
         return mFloors;
     }
 
+    public Floor getFloor(char floor) {
+        for (Floor f : getFloors()) {
+            if (f.getFloorNumber() == floor) {
+                return f;
+            }
+        }
+        return null;
+    }
+
     public void setRooms(List<Room> rooms) {
         mRooms = rooms;
     }

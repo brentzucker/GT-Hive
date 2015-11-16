@@ -4,6 +4,7 @@ global.hostname = require('os').hostname();
 global.port = 8080;
 global.cache_time_to_live = 5 * 60 * 1000; // 5 minutes
 global.count = {};
+global.occupancies = {};
 
 // Import List of Buildings and Rooms
 global.buildings_rooms = JSON.parse(getBuildingRoomsTextFile());
@@ -45,6 +46,11 @@ app.get('/api/buildings', function (request, response) {
 	response.send(json);
 });
 
+app.get('/api/floors', function (request, response) {
+	var json = getBuildingFloorsTextFile();
+	response.send(json);
+});
+
 // Array of all Rooms (b_id, name)
 app.get('/api/rooms', function (request, response) {
 	var json = getBuildingRoomsTextFile();
@@ -75,7 +81,57 @@ app.get('/api/locationinfo/buildings', function (request, response) {
 	requestOccupancies(response, buildings, type_of_request);
 });
 
-// Location info of All Buildings
+// Location info of All Floors
+app.get('/api/locationinfo/floors', function (request, response) {
+
+	var uri = '/api/locationinfo/rooms';
+	var url = 'http://' + global.hostname + ':' + global.port + uri;
+	
+	global.count['floors'] = 0;
+	global.occupancies['floors'] = {};
+		
+	global.http.get(url, function(res) {
+
+		var data = '';
+		res.on('data', function (chunk) {
+			data += chunk;
+		});
+
+		res.on("end", function () {
+
+			var occupancies = {};
+
+			var rooms = JSON.parse(data)['occupancies'];
+
+			var buildings = JSON.parse(getBuildingRoomsTextFile())['buildings'];
+			for (var i = 0; i < Object.keys(buildings).length; i++) {
+				var b_id = Object.keys(buildings)[i];
+				
+				for (var j = 0; j < buildings[b_id]['floors'].length; j++) {
+					var floor = buildings[b_id]['floors'][j];
+
+					var total_occupancy = 0;
+					for (var k = 0; k < buildings[b_id][floor].length; k++) {
+						var room = buildings[b_id][floor][k];
+
+						var ap = b_id + '-' + room;
+
+						if (ap in rooms) {
+							total_occupancy += rooms[ap]['occupancy'];
+						}
+					}
+					occupancies[b_id + '_' + floor] = {};
+					occupancies[b_id + '_' + floor] = total_occupancy;
+				}
+			}
+			var final_json = {};
+			final_json.occupancies = occupancies;
+			response.send(final_json);
+		});
+	});
+});
+
+// Location info of All Rooms
 app.get('/api/locationinfo/rooms', function (request, response) {
 
 	// Get Building/Room ids [b_id-room, ...]
@@ -100,7 +156,7 @@ app.get('/api/locationinfo/all', function (request, response) {
 	var url = 'http://' + global.hostname + ':' + global.port;
 
 	global.count_all = 0;
-	global.occupancies = {};
+	global.occupancies['all'] = {};
 
 	for (var i = 0; i < uris.length; i++) {
 		global.http.get(url + uris[i], function(res) {
@@ -114,12 +170,12 @@ app.get('/api/locationinfo/all', function (request, response) {
 				global.count_all++;
 				var locationinfo_obj = JSON.parse(data);
 				for (id in locationinfo_obj.occupancies) {
-					global.occupancies[id] = locationinfo_obj.occupancies[id];
+					global.occupancies['all'][id] = locationinfo_obj.occupancies[id];
 				}
 
 				if (global.count_all == uris.length) {
 					var final_json = {};
-					final_json.occupancies = global.occupancies;
+					final_json.occupancies = global.occupancies['all'];
 					response.send(final_json);
 				}
 			});
@@ -281,7 +337,7 @@ function requestOccupancies(response, location_list, type_of_request) {
 		for (var i = 0; i < location_list.length; i++) {
 
 			// Global Variables to keep track of asynchronous calls
-			global.occupancies = {};
+			global.occupancies[type_of_request] = {};
 			global.count[type_of_request] = 0;
 
 			// Custom URL structure for type_of_request
@@ -338,14 +394,14 @@ function requestOccupancies(response, location_list, type_of_request) {
 				    	json_obj.name = global.buildings['b_id: ' + b_id];
 				    	
 				    	// Push building object to global array
-				    	global.occupancies[b_id] = json_obj;
+				    	global.occupancies[type_of_request][b_id] = json_obj;
 				    } else if (type_of_request == 'rooms') {
 				    	var ap = b_id + '-' + room;
 				    	json_obj.ap = ap;
 						json_obj.room = room;
 
 						// Push building object to global array
-						global.occupancies[ap] = json_obj;
+						global.occupancies[type_of_request][ap] = json_obj;
 				    }
 					global.count[type_of_request]++;
 					// console.log(global.count[type_of_request] + '?=' + location_list.length);
@@ -355,11 +411,12 @@ function requestOccupancies(response, location_list, type_of_request) {
 
 						var final_json = {};
 						final_json.timestamp = new Date().getTime();
-						final_json.occupancies = global.occupancies;
+						final_json.occupancies = global.occupancies[type_of_request];
 						cacheOccupancies(type_of_request, final_json); // Write occupancies to text file
 						console.log('send: ' + type_of_request);
 						response.send(final_json);
 						console.log('Occupancies Request Complete: ' + type_of_request);
+						global.count[type_of_request] = 0;
 					}
 				});
 			});
@@ -378,13 +435,19 @@ function readFromTextFile(filename) {
 }
 
 function getBuildingsTextFile() {
-	var filename = 'building_ids_names.txt';
+	var filename = 'buildings.txt';
+	var txt = readFromTextFile(filename);
+	return txt;
+}
+
+function getBuildingFloorsTextFile() {
+	var filename = 'floors.txt';
 	var txt = readFromTextFile(filename);
 	return txt;
 }
 
 function getBuildingRoomsTextFile() {
-	var filename = 'buildings_rooms.txt';
+	var filename = 'rooms.txt';
 	var txt = readFromTextFile(filename);
 	return txt;
 }
@@ -530,26 +593,3 @@ function getPredictionRestOfDayPercentageWeighted(building_dates, b_id, hours, t
 
 	return prediction;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

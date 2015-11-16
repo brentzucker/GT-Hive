@@ -1,7 +1,7 @@
 package hive.mas.com.gthive;
 
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +29,13 @@ public class BuildingListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        // Load Buildings Occupancies from API
+        setRetainInstance(true);
+        new FetchBuildingsTask("BuildingOccupancies", Campus.get(getActivity())).execute();
+
+        // Load Floor Occupancies from API
+        new FetchBuildingsTask("FloorOccupancies", Campus.get(getActivity())).execute();
     }
 
     @Override
@@ -90,11 +97,8 @@ public class BuildingListFragment extends Fragment {
             CharSequence text = mOccupancyTextView.getText();
             int number = Integer.parseInt(text.toString());
             if (number <= 10) { //instead of 10 need to use capacity of building
-                mOccupancyTextView.setText("                                              " + mOccupancyTextView.getText());
-                //mOccupancyTextView.setTextColor(Color.rgb(0, 175, 0));
                 mStatusView.setImageResource(R.drawable.ic_thumbs_up);
             } else {
-                mOccupancyTextView.setTextColor(Color.rgb(175, 0, 0));
                 mStatusView.setImageResource(R.drawable.ic_thumbs_down);
             }
         }
@@ -131,6 +135,32 @@ public class BuildingListFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mBuildings.size();
+        }
+    }
+
+    private class FetchBuildingsTask extends AsyncTask<Void, Void, Campus> {
+
+        Campus campus;
+        String taskType;
+
+        protected FetchBuildingsTask(String taskType, Campus campus) {
+            this.campus = campus;
+            this.taskType = taskType;
+        }
+
+        @Override
+        protected Campus doInBackground(Void... params) {
+            if (taskType.equals("BuildingOccupancies")) {
+                return new APIFetcher().fetchBuildingOccupancies(this.campus);
+            } else if (taskType.equals("FloorOccupancies")) {
+                return new APIFetcher().fetchFloorOccupancies(this.campus);
+            } else
+                return campus;
+        }
+
+        @Override
+        protected void onPostExecute(Campus campus) {
+            updateUI();
         }
     }
 }
