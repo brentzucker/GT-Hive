@@ -11,8 +11,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
         android:background="@color/OldGold">
 
         <RelativeLayout
@@ -34,26 +33,31 @@
                 tools:text="Building Id"/>
         </RelativeLayout>
 
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:id="@+id/percentage_occupied_text_view"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  style="@style/PercentageOccupiedBox"
-                  android:text="99"
-                  android:layout_gravity="center_vertical"/>
-
-        <CheckBox
-        android:id="@+id/favorite_button"
+        <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#00ffffff"
-        android:paddingRight="10dp"
-        android:checked="false"
-        android:clickable="true"
-        android:gravity="right"
-        android:layout_gravity="center_vertical"
-        android:button="@drawable/favorite_button_states"
-        android:layout_alignParentRight="true"/>
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                      android:id="@+id/percentage_occupied_text_view"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      style="@style/PercentageOccupiedBox"
+                      android:text="99"
+                      android:layout_gravity="center_vertical"/>
+
+            <CheckBox
+                android:id="@+id/favorite_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:paddingRight="10dp"
+                android:checked="false"
+                android:clickable="true"
+                android:gravity="right"
+                android:layout_gravity="center_vertical"
+                android:button="@drawable/favorite_button_states"
+                android:layout_alignParentRight="true"/>
+        </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>
