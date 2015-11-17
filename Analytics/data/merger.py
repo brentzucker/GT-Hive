@@ -1,9 +1,10 @@
 import json 
 
-filenames = {
-	'2014.json',
-	'2015.json'
-}
+filenames = [
+	'01_02-2014-aps.json',
+	'03-2014-aps.json',
+	'04-2014-aps.json'
+]
 
 buildings = {}
 for filename in filenames:
