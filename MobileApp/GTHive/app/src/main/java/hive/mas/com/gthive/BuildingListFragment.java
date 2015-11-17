@@ -1,17 +1,21 @@
 package hive.mas.com.gthive;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -79,7 +83,7 @@ public class BuildingListFragment extends Fragment {
 
         private TextView mNameTextView;
         private TextView mOccupancyTextView;
-        private ImageView mStatusView;
+        private TextView mPercentageOccupiedTextView;
 
         public BuildingHolder(View itemView) {
             super(itemView);
@@ -87,27 +91,69 @@ public class BuildingListFragment extends Fragment {
 
             mNameTextView = (TextView) itemView.findViewById(R.id.list_item_building_name_text_view);
             mOccupancyTextView = (TextView) itemView.findViewById(R.id.list_item_building_occupancy_text_view);
-            mStatusView = (ImageView) itemView.findViewById(R.id.list_item_occupancy_status);
+            mPercentageOccupiedTextView = (TextView) itemView.findViewById(R.id.percentage_occupied_text_view);
         }
 
         public void bindBuilding(Building building) {
             mBuilding = building;
             mNameTextView.setText(mBuilding.getName());
             mOccupancyTextView.setText("" + mBuilding.getOccupancy());
-            CharSequence text = mOccupancyTextView.getText();
-            int number = Integer.parseInt(text.toString());
-            if (number <= 10) { //instead of 10 need to use capacity of building
-                mStatusView.setImageResource(R.drawable.ic_thumbs_up);
-            } else {
-                mStatusView.setImageResource(R.drawable.ic_thumbs_down);
-            }
+
+            setPercentageOccupiedTextView(((int) (Math.random() * 100)));
         }
 
-            @Override
-            public void onClick(View v) {
-                Intent intent = BuildingPagerActivity.newIntent(getActivity(), mBuilding.getId());
-                startActivity(intent);
+        @Override
+        public void onClick(View v) {
+            Intent intent = BuildingPagerActivity.newIntent(getActivity(), mBuilding.getId());
+            startActivity(intent);
+        }
+
+        public void setPercentageOccupiedTextView(int occupancyPercentage) {
+
+            int color;
+            switch (occupancyPercentage / 10) {
+                case 10: color = R.color.Red10;
+                         break;
+                case 9:  color = R.color.Red9;
+                         break;
+                case 8:  color = R.color.Red8;
+                         break;
+                case 7:  color = R.color.Yellow7;
+                         break;
+                case 6:  color = R.color.Yellow6;
+                         break;
+                case 5:  color = R.color.Yellow5;
+                         break;
+                case 4:  color = R.color.Yellow4;
+                         break;
+                case 3:  color = R.color.Green3;
+                         break;
+                case 2:  color = R.color.Green2;
+                         break;
+                case 1:  color = R.color.Green1;
+                         break;
+                case 0:  color = R.color.Green1;
+                         break;
+                default: color = R.color.Red11;
+                         break;
             }
+
+            mPercentageOccupiedTextView.setText("" + occupancyPercentage);
+
+            Drawable background = mPercentageOccupiedTextView.getBackground();
+
+            // http://stackoverflow.com/questions/17823451/set-android-shape-color-programmatically
+            if (background instanceof GradientDrawable) {
+                // cast to 'GradientDrawable'
+                GradientDrawable gradientDrawable = (GradientDrawable) background;
+                gradientDrawable.setColor(ContextCompat.getColor(getContext(), color));
+            } else if (background instanceof ShapeDrawable) {
+                ShapeDrawable shapeDrawable = (ShapeDrawable) background;
+                shapeDrawable.getPaint().setColor(ContextCompat.getColor(getContext(), color));
+            } else {
+                Log.e("PercentageOccupiedTextView", "not selected");
+            }
+        }
     }
 
     private class BuildingAdapter extends RecyclerView.Adapter<BuildingHolder> {

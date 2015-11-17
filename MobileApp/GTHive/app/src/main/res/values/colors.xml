@@ -10,4 +10,17 @@
     <color name="MarshMallow">#edebe7</color>
     <color name="Red">#FF0000</color>
     <color name="Green">#00AF00</color>
+
+
+    <color name="Red11">#990000</color>
+    <color name="Red10">#cc0000</color>
+    <color name="Red9">#ff0000</color>
+    <color name="Red8">#ff5000</color>
+    <color name="Yellow7">#ff7a00</color>
+    <color name="Yellow6">#ffdb00</color>
+    <color name="Yellow5">#fff400</color>
+    <color name="Yellow4">#ffff00</color>
+    <color name="Green3">#34b246</color>
+    <color name="Green2">#23772f</color>
+    <color name="Green1">#2a6323</color>
 </resources>
