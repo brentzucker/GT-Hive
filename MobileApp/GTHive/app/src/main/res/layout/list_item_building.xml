@@ -20,22 +20,33 @@
             android:gravity="start"
             tools:text="Building Name"/>
 
-        <TextView
-            style="@style/CardTextStyle"
-            android:id="@+id/list_item_building_occupancy_text_view"
-            android:layout_below="@id/list_item_building_name_text_view"
-            tools:text="Building Id"
-            />
+            <TextView
+                style="@style/CardTextStyle"
+                android:id="@+id/list_item_building_name_text_view"
+                tools:text="Building Name"/>
 
-        <ImageView android:id="@+id/list_item_occupancy_status"
-              android:layout_width="50dp"
-              android:layout_height="50dp"
-                   android:paddingTop="10dp"
-                   android:layout_toLeftOf="@id/favorite_button"
-                   android:layout_centerVertical="true"
-                   android:src="@drawable/ic_thumbs_up"/>
+            <TextView
+                style="@style/CardTextStyle"
+                android:id="@+id/list_item_building_occupancy_text_view"
+                android:layout_below="@id/list_item_building_name_text_view"
+                tools:text="Building Id"
+                />
+        </RelativeLayout>
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <CheckBox
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                      android:id="@+id/percentage_occupied_text_view"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      style="@style/PercentageOccupiedBox"
+                      android:text="99"
+                      android:layout_gravity="center_vertical"/>
+
+            <CheckBox
             android:id="@+id/favorite_button"
             android:layout_width="35dp"
             android:layout_height="60dp"
@@ -47,6 +58,6 @@
             android:layout_centerVertical="true"
             android:button="@drawable/favorite_button_states"
             android:layout_alignParentRight="true"/>
-
-    </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
 </android.support.v7.widget.CardView>
