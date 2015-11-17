@@ -3,7 +3,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/card_view"
+    android:id="@+id/favorite_card_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     card_view:cardCornerRadius="4dp"
@@ -22,24 +22,24 @@
 
             <TextView
                 style="@style/CardTextStyle"
-                android:id="@+id/list_item_building_name_text_view"
+                android:id="@+id/favorite_building_name_text_view"
                 android:gravity="start"
                 tools:text="Building Name"/>
 
             <TextView
                 style="@style/CardTextStyle"
-                android:id="@+id/list_item_building_occupancy_text_view"
-                android:layout_below="@id/list_item_building_name_text_view"
+                android:id="@+id/favorite_building_occupancy_text_view"
+                android:layout_below="@id/favorite_building_name_text_view"
                 tools:text="Building Id"/>
         </RelativeLayout>
 
         <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
             <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-                      android:id="@+id/percentage_occupied_text_view"
+                      android:id="@+id/favorite_percentage_occupied_text_view"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       style="@style/PercentageOccupiedBox"
@@ -47,7 +47,7 @@
                       android:layout_gravity="center_vertical"/>
 
             <CheckBox
-                android:id="@+id/favorite_button"
+                android:id="@+id/favorite_favorite_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00ffffff"

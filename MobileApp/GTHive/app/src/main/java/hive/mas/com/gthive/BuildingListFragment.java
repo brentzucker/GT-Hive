@@ -12,8 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -29,6 +27,19 @@ public class BuildingListFragment extends Fragment {
     private RecyclerView mBuildingRecyclerView;
     private BuildingAdapter mAdapter;
 
+    //adding ability to use tabs
+    public static final String ARG_PAGE = "ARG_PAGE";
+    private int mPage;
+
+    public static BuildingListFragment newInstance(int page) {
+        Bundle args = new Bundle();
+        args.putInt(ARG_PAGE, page);
+        BuildingListFragment fragment = new BuildingListFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+    //ended ability to use tabs
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,15 +53,9 @@ public class BuildingListFragment extends Fragment {
         new FetchBuildingsTask("FloorOccupancies", Campus.get(getActivity())).execute();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.fragment_building_list, menu);
-    }
-
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
-        View view = inflater.inflate(R.layout.fragment_building_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_menu, container, false);
 
         mBuildingRecyclerView = (RecyclerView) view.findViewById(R.id.building_recycler_view);
         mBuildingRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
