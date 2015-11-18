@@ -3,7 +3,9 @@ package hive.mas.com.gthive;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by bvz on 11/18/15.
@@ -12,7 +14,7 @@ public class Favorites {
 
     private static Favorites sFavorites;
 
-    private List<String> mBuildingIds;
+    private Set<String> mBuildingIds;
 
     public static Favorites get(Context context) {
         if (sFavorites == null) {
@@ -22,7 +24,7 @@ public class Favorites {
     }
 
     private Favorites(Context context) {
-        mBuildingIds = new ArrayList<>();
+        mBuildingIds = new HashSet<>();
 
         // Temporary: Load CULC, Sigma Chi
         mBuildingIds.add("166");
@@ -42,10 +44,13 @@ public class Favorites {
     /* Getters and Setters */
 
     public List<String> getBuildingIds() {
-        return mBuildingIds;
+
+        List<String> buildingIds = new ArrayList<>();
+        buildingIds.addAll(mBuildingIds);
+        return buildingIds;
     }
 
-    public void setBuildingIds(List<String> buildingIds) {
+    public void setBuildingIds(Set<String> buildingIds) {
         mBuildingIds = buildingIds;
     }
 }
