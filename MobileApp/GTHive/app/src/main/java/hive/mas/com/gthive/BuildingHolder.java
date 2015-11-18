@@ -98,7 +98,7 @@ public class BuildingHolder extends RecyclerView.ViewHolder implements View.OnCl
                 break;
         }
 
-        mPercentageOccupiedTextView.setText("" + occupancyPercentage);
+        mPercentageOccupiedTextView.setText("" + occupancyPercentage + "%");
 
         Drawable background = mPercentageOccupiedTextView.getBackground();
 
