@@ -12,6 +12,8 @@ for filename in filenames:
 
 	contents = json.loads(f.read())
 
+	f.close()
+
 	for b_id in contents.keys():
 		if b_id not in buildings:
 			buildings[b_id] = contents[b_id]

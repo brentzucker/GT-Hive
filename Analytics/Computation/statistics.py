@@ -157,6 +157,8 @@ for b_id in buildings.keys():
 	buildings[b_id]['p_1'] = users_unique[int(len(users_unique) * .01)]
 	buildings[b_id]['iqr'] = buildings[b_id]['p_75'] - buildings[b_id]['p_25']
 	buildings[b_id]['avg_weekday_daytime'] = sum(users_unique) / len(users_unique)
+	buildings[b_id]['avg_weekday_daytime_top95_avg'] = sum(users_unique[int(len(users_unique) * .05):]) / len(users_unique[int(len(users_unique) * .05):])
+	buildings[b_id]['avg_weekday_daytime_top90_avg'] = sum(users_unique[int(len(users_unique) * .1):]) / len(users_unique[int(len(users_unique) * .1):])
 
 
 # Calculate std deviation for weekday's (daytime)
@@ -291,6 +293,8 @@ if True:
 		print 'min: ' + str(buildings[b_id]['min_users_unique'])
 		print 'avg weekday daytime: ' + str(buildings[b_id]['avg_weekday_daytime'])
 		print 'weekday daytime std_dev: ' + str(buildings[b_id]['std_dev'])
+		print 'avg_weekday_daytime_top95_avg: ' + str(buildings[b_id]['avg_weekday_daytime_top95_avg'])
+		print 'avg_weekday_daytime_top90_avg: ' + str(buildings[b_id]['avg_weekday_daytime_top90_avg'])
 		print 'iqr: ' + str(buildings[b_id]['iqr'])
 		print 'min_day: ' + str(buildings[b_id]['min_day'])
 		print 'median: ' + str(buildings[b_id]['median_users_unique'])
