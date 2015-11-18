@@ -143,7 +143,7 @@ public class BuildingListFragment extends Fragment {
                          break;
             }
 
-            mPercentageOccupiedTextView.setText("" + occupancyPercentage);
+            mPercentageOccupiedTextView.setText("" + occupancyPercentage + "%");
 
             Drawable background = mPercentageOccupiedTextView.getBackground();
 
