@@ -4,11 +4,6 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
-
-import hive.mas.com.gthive.FavoritesFragment;
 
 /**
  * Created by Stefan on 11/16/15.
@@ -37,7 +32,7 @@ public class TabFragmentPagerAdapter extends FragmentPagerAdapter {
                 return BuildingListFragment.newInstance(position + 1);
             case 1:
                 // favorites list fragment activity
-                return FavoritesFragment.newInstance(position + 1);
+                return FavoriteListFragment.newInstance(position + 1);
         }
         return null;
     }
