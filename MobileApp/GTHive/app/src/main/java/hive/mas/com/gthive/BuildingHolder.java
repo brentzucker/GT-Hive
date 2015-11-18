@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 /**
@@ -44,6 +45,19 @@ public class BuildingHolder extends RecyclerView.ViewHolder implements View.OnCl
         mOccupancyTextView.setText("" + mBuilding.getOccupancy());
 
         setFavoriteCheckbox();
+
+        mFavoriteCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                Favorites favorites = Favorites.get(mActivity);
+                if (isChecked) {
+                    favorites.addBuildingId(mBuilding.getBId());
+                } else {
+                    favorites.removeBuildingId(mBuilding.getBId());
+                }
+            }
+        });
 
         setPercentageOccupiedTextView(((int) (Math.random() * 100)));
     }
