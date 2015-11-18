@@ -54,7 +54,7 @@ public class FavoriteListFragment extends Fragment {
     private void updateUI() {
 
         Campus campus = Campus.get(getActivity());
-        List<Building> buildings = campus.getBuildings();
+        List<Building> buildings = campus.getFavoriteBuildings();
 
         if (mAdapter == null) {
             mAdapter = new BuildingAdapter(getActivity(), buildings);

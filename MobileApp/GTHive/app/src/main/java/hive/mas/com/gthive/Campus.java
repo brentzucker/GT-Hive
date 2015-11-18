@@ -23,6 +23,7 @@ public class Campus {
     private static Campus sCampus;
 
     private List<Building> mBuildings;
+    private Favorites mFavorites;
 
     public static Campus get(Context context) {
         if (sCampus == null) {
@@ -40,6 +41,8 @@ public class Campus {
 
         // Sort mBuildings Alphabetically
         sortBuildings();
+
+        mFavorites = Favorites.get(context);
     }
 
     public List<Building> getBuildings() {
@@ -55,6 +58,18 @@ public class Campus {
         return null;
     }
 
+    public List<Building> getFavoriteBuildings() {
+
+        List<Building> buildings = new ArrayList<>();
+        for (String bid : mFavorites.getBuildingIds()) {
+
+            Building favoritedBuilding = getBuilding(bid);
+            buildings.add(favoritedBuilding);
+        }
+        return buildings;
+    }
+
+    // TODO: make class: TextLoader
     private String readTxt(String filename) {
         Log.i("readTxt()", filename);
         InputStream in  = null;
