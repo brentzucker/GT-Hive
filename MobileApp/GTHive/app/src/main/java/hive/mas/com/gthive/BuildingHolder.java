@@ -9,11 +9,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 /**
  * Created by bvz on 11/18/15.
  */
+// TODO: Fix loading occupancies / updating UI bug
 public class BuildingHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     private Activity mActivity;
@@ -23,6 +25,7 @@ public class BuildingHolder extends RecyclerView.ViewHolder implements View.OnCl
     private TextView mNameTextView;
     private TextView mOccupancyTextView;
     private TextView mPercentageOccupiedTextView;
+    private CheckBox mFavoriteCheckbox;
 
     public BuildingHolder(Activity activity, View itemView) {
         super(itemView);
@@ -32,12 +35,15 @@ public class BuildingHolder extends RecyclerView.ViewHolder implements View.OnCl
         mNameTextView = (TextView) itemView.findViewById(R.id.list_item_building_name_text_view);
         mOccupancyTextView = (TextView) itemView.findViewById(R.id.list_item_building_occupancy_text_view);
         mPercentageOccupiedTextView = (TextView) itemView.findViewById(R.id.percentage_occupied_text_view);
+        mFavoriteCheckbox = (CheckBox) itemView.findViewById(R.id.favorite_button);
     }
 
     public void bindBuilding(Building building) {
         mBuilding = building;
         mNameTextView.setText(mBuilding.getName());
         mOccupancyTextView.setText("" + mBuilding.getOccupancy());
+
+        setFavoriteCheckbox();
 
         setPercentageOccupiedTextView(((int) (Math.random() * 100)));
     }
@@ -92,6 +98,14 @@ public class BuildingHolder extends RecyclerView.ViewHolder implements View.OnCl
             shapeDrawable.getPaint().setColor(ContextCompat.getColor(mActivity, color));
         } else {
             Log.e("PercentageOccupiedTextView", "not selected");
+        }
+    }
+
+    public void setFavoriteCheckbox() {
+
+        mFavoriteCheckbox.setChecked(false);
+        if (mBuilding.isFavorite(mActivity)) {
+            mFavoriteCheckbox.setChecked(true);
         }
     }
 }

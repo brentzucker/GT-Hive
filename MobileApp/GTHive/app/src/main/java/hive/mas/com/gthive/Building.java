@@ -1,5 +1,7 @@
 package hive.mas.com.gthive;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,13 @@ public class Building extends Location {
         super(id, name);
         mRooms = new ArrayList<>();
         mFloors = new ArrayList<>();
+    }
+
+    public boolean isFavorite(Context context) {
+
+        Favorites favorites = Favorites.get(context);
+
+        return favorites.getBuildingIds().contains(this.getBId());
     }
 
     // Returns a String of Floor Numbers
