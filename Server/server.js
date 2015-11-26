@@ -17,6 +17,10 @@ var app = express();
 // Path variable
 var path = require('path');
 
+// set static files location
+// used for requests that our frontend will make
+app.use(express.static(__dirname + '/public'));
+
 // Configure app to handle CORS requests
 app.use(function(req, res, next) {
 	res.setHeader('Access-Control-Allow-Origin', '*');
