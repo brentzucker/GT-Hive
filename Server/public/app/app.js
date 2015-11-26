@@ -1,1 +1,1 @@
-angular.module('gthiveApp', ['app.routes']);
+angular.module('gthiveApp', ['app.routes', 'mainCtrl', 'buildingService']);

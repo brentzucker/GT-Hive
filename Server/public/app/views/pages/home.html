@@ -1,3 +1,25 @@
-<div class="jumbotron text-center">
-	<h1>Hello World!</h1>
+<div class="page-header">
+	<h1>
+		Buildings
+	</h1>
 </div>
+
+<div class="jumbotron text-center" ng-show="main.processing">
+	<p>Loading Buildings...</p>
+</div>
+
+<table class="table table-bordered table-striped" ng-show="main.buildings">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Occupancy</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="building in main.buildings">
+
+			<td>{{ building.name }}</td>
+			<td>{{ building.occupancy }}</td>
+		</tr>
+	</tbody>
+</table>
