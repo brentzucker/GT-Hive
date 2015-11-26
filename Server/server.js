@@ -14,6 +14,9 @@ global.buildings_rooms = JSON.parse(getBuildingRoomsTextFile());
 var express = require('express');
 var app = express();
 
+// Path variable
+var path = require('path');
+
 // Configure app to handle CORS requests
 app.use(function(req, res, next) {
 	res.setHeader('Access-Control-Allow-Origin', '*');
@@ -285,6 +288,12 @@ app.get('/api/predict/:str', function (request, response) {
 	}
 
 	response.send(output);
+});
+
+// MAIN CATCHALL ROUTE ---------------
+// SEND USERS TO FRONTEND ------------
+app.get('*', function(req, res) {
+	res.sendFile(path.join(__dirname + '/public/app/views/index.html'));
 });
 
 /* * * * * * * * * * 
