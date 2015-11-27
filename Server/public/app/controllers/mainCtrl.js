@@ -1,17 +1,20 @@
-angular.module('mainCtrl', ['buildingService'])
+angular.module('mainCtrl', ['uiGmapgoogle-maps'])
 
-.controller('mainController', function(Building) {
+.controller('mainController', function($scope, uiGmapGoogleMapApi) {
 
 	var vm = this;
 
-	// Set a processing variable to show loading things
-	vm.processing = true;
+	vm.processing  = true;
 
-	// Grab all buildings
-	vm.buildings = Building.all();
-		
+	// uiGmapGoogleMapApi is a promise.
+    // The "then" callback function provides the google.maps object.
+    uiGmapGoogleMapApi.then(function(maps) {
 
-	vm.processing = false;
+    	$scope.map = {
+	  		center: { latitude: 33.7758, longitude: -84.3947 },
+	  		zoom: 16
+		};
 
-					
+		vm.processing = false;
+    });	
 });

@@ -1,25 +1,12 @@
 <div class="page-header">
-	<h1>
-		Buildings
-	</h1>
+	<h1>Campus Map</h1>
 </div>
 
+<!-- LOADING MESSAGE -->
 <div class="jumbotron text-center" ng-show="main.processing">
-	<p>Loading Buildings...</p>
+	<p>Loading Map...</p>
 </div>
 
-<table class="table table-bordered table-striped" ng-show="main.buildings">
-	<thead>
-		<tr>
-			<th>Name</th>
-			<th>Occupancy</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr ng-repeat="building in main.buildings">
 
-			<td>{{ building.name }}</td>
-			<td>{{ building.occupancy }}</td>
-		</tr>
-	</tbody>
-</table>
+<ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
+
