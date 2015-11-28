@@ -7,6 +7,29 @@
 	<p>Loading Map...</p>
 </div>
 
+<div class="row">
+	<div class="col-md-8">
+		<ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
+	</div>
 
-<ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
+	<div class="col-md-4">
+		<table class="table table-bordered table-striped" ng-show="main.buildings">
+			<h3>List of Campus Buildings</h3>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Occupancy</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="building in main.buildings">
+					<td>{{ building.name }}</td>
+					<td>{{ building.occupancy }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
 

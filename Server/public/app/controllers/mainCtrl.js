@@ -1,6 +1,6 @@
-angular.module('mainCtrl', ['uiGmapgoogle-maps'])
+angular.module('mainCtrl', ['uiGmapgoogle-maps', 'buildingService'])
 
-.controller('mainController', function($scope, uiGmapGoogleMapApi) {
+.controller('mainController', function($scope, uiGmapGoogleMapApi, Building) {
 
 	var vm = this;
 
@@ -11,9 +11,11 @@ angular.module('mainCtrl', ['uiGmapgoogle-maps'])
     uiGmapGoogleMapApi.then(function(maps) {
 
     	$scope.map = {
-	  		center: { latitude: 33.7758, longitude: -84.3947 },
+	  		center: { latitude: 33.7753, longitude: -84.3965 },
 	  		zoom: 16
 		};
+
+		vm.buildings = Building.all();
 
 		vm.processing = false;
     });	
