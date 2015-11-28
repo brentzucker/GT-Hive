@@ -17,6 +17,11 @@ var app = express();
 // Path variable
 var path = require('path');
 
+// Database
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://admin:password@ds035623.mongolab.com:35623/gt_hive'); 
+var Building = require('./app/models/building');
+
 // set static files location
 // used for requests that our frontend will make
 app.use(express.static(__dirname + '/public'));
@@ -44,6 +49,16 @@ global.http = require('http');
 app.get('/api/', function (request, response) {
 	var html = getAPIIndexPage();
 	response.send(html);
+});
+
+// Get all buildings for angular app
+app.get('/api/angular/buildings', function(req, res) {
+	Building.find(function(err, buildings) {
+		if (err) res.send(err);
+
+		// return the buildings
+		res.json(buildings);
+	});
 });
 
 // Array of all Buildings (b_id, name)
