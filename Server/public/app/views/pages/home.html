@@ -9,7 +9,9 @@
 
 <div class="row">
 	<div class="col-md-8">
-		<ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
+		<ui-gmap-google-map center='map.center' zoom='map.zoom'>
+			<ui-gmap-markers models="markers" coords="'self'" icon="'icon'" labelContent="'title'"></ui-gmap-markers>
+		</ui-gmap-google-map>
 	</div>
 
 	<div class="col-md-4">
@@ -24,7 +26,7 @@
 			<tbody>
 				<tr ng-repeat="building in main.buildings">
 					<td>{{ building.name }}</td>
-					<td>{{ building.occupancy }}</td>
+					<td>{{ building.occupancy }} / 100</td>
 				</tr>
 			</tbody>
 		</table>

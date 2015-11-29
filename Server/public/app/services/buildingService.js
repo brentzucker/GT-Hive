@@ -1,6 +1,6 @@
 angular.module('buildingService', [])
 
-.factory('Building', function($http) {
+.factory('Building', function($http, $log) {
 
 	var buildingFactory = {};
 
@@ -11,6 +11,21 @@ angular.module('buildingService', [])
 	buildingFactory.getOccupancy = function(bid) {
 		return $http.get('/api/locationinfo/b_id=' + bid);
 	};
+
+	buildingFactory.updateOccupancies = function(bids) {
+		//$log.log(bids);
+
+		var str = '';
+		var length = bids.length;
+		for (var i = 0; i < length - 1; i++) {
+			str += 'b_id=' + bids[i] + '&';
+		}
+		str += 'b_id=' + bids[length - 1];
+
+		//$log.log(str);
+
+		return $http.get('/api/locationinfo/' + str);
+	}
 
 	return buildingFactory;
 });
