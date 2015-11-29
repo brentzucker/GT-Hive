@@ -13,7 +13,7 @@ angular.module('mainCtrl', ['uiGmapgoogle-maps', 'buildingService'])
     uiGmapGoogleMapApi.then(function(maps) {
 
     	$scope.map = {
-	  		center: { latitude: 33.7753, longitude: -84.3965 },
+	  		center: { latitude: 33.7753, longitude: -84.3975 },
 	  		zoom: 16
 		};
 
@@ -35,22 +35,30 @@ angular.module('mainCtrl', ['uiGmapgoogle-maps', 'buildingService'])
 						}
 
 						vm.processing = false;
+
+						var createMarker = function(i, building) {
+							var marker = {
+								id: i,
+								title: building.name,
+								latitude: building.latitude,
+								longitude: building.longitude
+							};
+
+							// Set color
+							if (building.occupancy <= 40)
+								marker['icon'] = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
+							else if (building.occupancy <= 80)
+								marker['icon'] = 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
+							else
+								marker['icon'] = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+
+							return marker;
+						}
+
+						for (var i = 0; i < vm.buildings.length; i++) {
+							$scope.markers.push(createMarker(i, vm.buildings[i]));
+						}
 					});
-
-				// var createMarker = function(i, title, latitude, longitude) {
-				// 	var ret = {
-				// 		title: title,
-				// 		latitude: latitude,
-				// 		longitude: longitude,
-				// 		icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
-				// 	};
-				// 	ret["id"] = i;
-				// 	return ret;
-				// }
-
-				// for (var i = 0; i < vm.buildings.length; i++) {
-				// 	$scope.markers.push(createMarker(i, vm.buildings[i].name, vm.buildings[i].latitude, vm.buildings[i].longitude));
-				// }
 			});
     });	
 });

@@ -13,7 +13,6 @@ angular.module('buildingService', [])
 	};
 
 	buildingFactory.updateOccupancies = function(bids) {
-		//$log.log(bids);
 
 		var str = '';
 		var length = bids.length;
