@@ -17,48 +17,47 @@ angular.module('mainCtrl', ['uiGmapgoogle-maps', 'buildingService'])
 	  		zoom: 16
 		};
 
-		Building.all()
-			.success(function(data) {
-				vm.buildings = data;
+		return Building.all();
 
-				var bids = [];
+	}).then(function(response) {
+		vm.buildings = response.data;
 
-				for (var i = 0; i < vm.buildings.length; i++) {
-					bids.push(vm.buildings[i].bid);
-				}
+		var bids = [];
 
-				Building.updateOccupancies(bids)
-					.success(function(updated) {
+		for (var i = 0; i < vm.buildings.length; i++) {
+			bids.push(vm.buildings[i].bid);
+		}
 
-						for (var i = 0; i < vm.buildings.length; i++) {
-							vm.buildings[i].occupancy = updated.occupancies[vm.buildings[i].bid].occupancy;
-						}
+		return Building.updateOccupancies(bids);
 
-						vm.processing = false;
+	}).then(function(updated) {
+		for (var i = 0; i < vm.buildings.length; i++) {
+			vm.buildings[i].occupancy = updated.data.occupancies[vm.buildings[i].bid].occupancy;
+		}
 
-						var createMarker = function(i, building) {
-							var marker = {
-								id: i,
-								title: building.name,
-								latitude: building.latitude,
-								longitude: building.longitude
-							};
+		vm.processing = false;
 
-							// Set color
-							if (building.occupancy <= 40)
-								marker['icon'] = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
-							else if (building.occupancy <= 80)
-								marker['icon'] = 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
-							else
-								marker['icon'] = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+		var createMarker = function(i, building) {
+			var marker = {
+				id: i,
+				title: building.name,
+				latitude: building.latitude,
+				longitude: building.longitude
+			};
 
-							return marker;
-						}
+			// Set color
+			if (building.occupancy <= 40)
+				marker['icon'] = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
+			else if (building.occupancy <= 80)
+				marker['icon'] = 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
+			else
+				marker['icon'] = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
 
-						for (var i = 0; i < vm.buildings.length; i++) {
-							$scope.markers.push(createMarker(i, vm.buildings[i]));
-						}
-					});
-			});
+			return marker;
+		}
+
+		for (var i = 0; i < vm.buildings.length; i++) {
+			$scope.markers.push(createMarker(i, vm.buildings[i]));
+		}
     });	
 });
